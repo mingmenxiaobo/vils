@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('项目平面图')" />
+<style>
+    .backimg{
+
+        background-image: url("../../../projectmap.png");
+        background-size:cover;
+        background-attachment: fixed;
+        background-repeat:no-repeat;
+        background-color: #FFFFFF;
+        margin: 0px;
+        width:1024px;
+        height: 768px;
+    }
+
+</style>
+</head>
+
+<body class="gray-bg" style="background-color: #00011d; " id="allReport">
+
+<div class="backimg" >
+    <div   style="width: 120px;top:200px;left: 200px;z-index:200px;position:absolute;">
+    <a onclick="zoomout();" style="background-color: #FFFFFF; width: 50px"> [+]</a>
+    <a onclick="zoomin();" style="background-color: #FFFFFF; width: 50px"> [-] </a>
+</div>
+
+</div>
+<th:block th:include="include :: footer" />
+
+</body>
+<script type="text/JavaScript">
+
+    var i=0;
+
+
+       function zoomout() {
+            i++;
+           $(".backimg").css({zoom:1+i/10});
+            console.log(1+i/10);
+        }
+       function zoomin() {
+           i--;
+           $(".backimg").css({zoom:1+i/10});
+           console.log(1+i/10);
+        }
+    function zoomDef() {
+            document.body.style.zoom=1;
+            i=1;
+        }
+
+</script>
+</html>

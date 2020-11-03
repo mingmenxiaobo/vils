@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('节假日列表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p >[[#{device.title.deptid}]]：</p>
+                                <div class="col-sm-3" style="padding: 0px">
+                                    <div class="input-group">
+                                        <input id="dept" name="dept" type="hidden"  />
+                                        <input style="width: 150px" name="treedeptName" onclick="selectDeptTree()" id="treedeptName" type="text" th:placeholder="#{user.title.dept}" class="form-control" required>
+
+                                    </div>
+                                </div>
+
+                            </li>
+                            <li class="select-time">
+                                <p> [[#{holiday.title.repDate}]]：</p>
+                                <input type="text" class="time-input"  name="repdate"/>
+                            </li>
+                            <li>
+                                <p>[[#{holiday.title.repYear}]]：</p>
+                                <input type="text" name="repyear"/>
+                            </li>
+                            <li>
+                                <p>[[#{holiday.title.repMonth}]]：</p>
+                                <input type="text" name="repmonth"/>
+                            </li>
+                            <li>
+                                <p>[[#{holiday.title.status}]]：</p>
+                                <select name="status">
+                                    <option value="">[[#{role.title.all}]]</option>
+                                    <option value="1">[[#{holiday.title.workingDay}]]</option>
+                                    <option value="0">[[#{holiday.title.offDay}]]</option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;[[#{public.button.query}]]</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;[[#{public.button.refresh}]]</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+            <div class="btn-group-sm" id="toolbar" role="group">
+
+                <a class="btn btn-danger multiple disabled" onclick="$.operate.removeAll()" shiro:hasPermission="system:holiday:remove">
+                    <i class="fa fa-remove"></i> [[#{public.button.remove}]]
+                </a>
+
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+                <table id="bootstrap-table"></table>
+            </div>
+        </div>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script th:inline="javascript">
+        var editFlag = [[${@permission.hasPermi('system:holiday:edit')}]];
+        var removeFlag = [[${@permission.hasPermi('system:holiday:remove')}]];
+        var prefix = ctx + "system/holiday";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                createUrl: prefix + "/add",
+                updateUrl: prefix + "/edit/{id}",
+                removeUrl: prefix + "/remove",
+                exportUrl: prefix + "/export",
+                modalName: "节假日",
+                columns: [{
+                    checkbox: true
+                },
+                {
+                    field : 'id', 
+                    title : 'null',
+                    visible: false
+                },
+                {
+                    field : 'dept',
+                    title : [[#{holiday.title.ment}]]
+                },
+                {
+                    field : 'repdate', 
+                    title : [[#{holiday.title.repDate}]]
+                },
+                {
+                    field : 'repyear', 
+                    title : [[#{holiday.title.repYear}]]
+                },
+                {
+                    field : 'repmonth', 
+                    title : [[#{holiday.title.repMonth}]]
+                },
+
+                {
+                    field : 'status', 
+                    title : [[#{holiday.title.status}]],
+                    formatter: function (value, row, index) {
+                        return statusTools(row);
+                    }
+                },
+                {
+                    title: [[#{public.title.operation}]],
+                    align: 'center',
+                    formatter: function(value, row, index) {
+                        var actions = [];
+                        actions.push('<a class="btn btn-danger btn-xs ' + removeFlag + '" href="javascript:void(0)" onclick="$.operate.remove(\'' + row.id + '\')"><i class="fa fa-remove"></i>[[#{public.button.remove}]]</a>');
+                        return actions.join('');
+                    }
+                }]
+            };
+            $.table.init(options);
+        });
+
+        /* 用户状态显示 */
+        function statusTools(row) {
+            if (row.status == 1) {
+                return [[#{holiday.title.workingDay}]];
+            } else {
+                return [[#{holiday.title.holiday}]];
+            }
+        }
+
+        /*用户管理-新增-选择部门树*/
+        function selectDeptTree() {
+            var treeId = $("#treeDeptId").val();
+            var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeDeptId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: [[#{device.title.selectmenu}]],
+                width: "380",
+                url: url,
+                callBack: doSubmitDept
+            };
+            $.modal.openOptions(options);
+        }
+
+
+        function doSubmitDept(index, layero){
+            var body = layer.getChildFrame('body', index);
+
+            $("#dept").val(body.find('#treeId').val());
+            $("#treedeptName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+    </script>
+</body>
+</html>

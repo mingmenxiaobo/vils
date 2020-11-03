@@ -1,0 +1,332 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.SysTemplateMapper">
+
+    <resultMap type="SysTemplate_layout" id="templateResultMap">
+        <id column="template_id" property="template_id"/>
+        <result column="template_name" property="template_name"/>
+        <result column="template_type" property="template_type"/>
+        <result column="width" property="width"/>
+        <result column="height" property="height"/>
+        <result column="base_map" property="base_map"/>
+        <result column="map_width" property="map_width"/>
+        <result column="map_height" property="map_height"/>
+        <result column="createTime" property="createTime"/>
+        <result column="modifyDate" property="modifyDate"/>
+        <result column="createUser" property="createUser"/>
+        <result column="modifyUser" property="modifyUser"/>
+        <result column="status" property="status"/>
+        <collection property="detailList" ofType="SysTemplate_detail">
+            <result column="template_id" property="template_id"/>
+            <result column="control_name" property="control_name"/>
+            <result column="location_x" property="location_x"/>
+            <result column="location_y" property="location_y"/>
+            <result column="control_type" property="control_type"/>
+            <result column="control_shape" property="control_shape"/>
+            <result column="qrcode" property="qrcode"/>
+            <result column="device_name"  property="device_name"/>
+            <result column="idle"  property="idle"/>
+            <result column="depart"  property="depart"/>
+        </collection>
+    </resultMap>
+
+
+    <resultMap type="SysTemplate_detail" id="SysDetail">
+        <result property="template_id" column="template_id" />
+        <result property="control_name"  column="control_name" />
+        <result property="location_x"  column="location_x" />
+        <result property="location_y"  column="location_y" />
+        <result property="control_type"  column="control_type" />
+        <result property="control_shape"  column="control_shape" />
+        <result property="qrcode"  column="qrcode" />
+        <result property="device_name"  column="device_name"/>
+        <result column="idle"  property="idle"/>
+        <result column="depart"  property="depart"/>
+    </resultMap>
+
+    <resultMap type="SysTemplate_layout" id="SysLayout">
+        <id     property="template_id" column="template_id" />
+        <result property="template_name"  column="template_name" />
+        <result property="template_type"  column="template_type" />
+        <result property="width"  column="width" />
+        <result property="height"  column="height" />
+        <result property="base_map"  column="base_map" />
+        <result property="map_width"  column="map_width" />
+        <result property="map_height"  column="map_height" />
+        <result property="createTime"  column="createTime" />
+        <result property="modifyDate"  column="modifyDate" />
+        <result property="createUser"  column="createUser" />
+        <result property="modifyUser"  column="modifyUser" />
+        <result property="status"  column="status" />
+        <result property="deptId"  column="dept_id" />
+    </resultMap>
+
+    <!--查询模板数据列表-->
+    <select id="selectTemplateList" parameterType="SysTemplate_layout" resultMap="SysLayout">
+        select distinct a.template_id,a.template_name,a.template_type,a.width,a.height,
+        a.base_map
+        from  template_layout a
+        left join template_detail b
+        on a.template_id=b.template_id
+        left join yx_device c
+        on b.qrcode=c.device_code
+        <where>
+            <if  test="deptId != null  and deptId != ''">and c.dept_id=#{deptId} </if>
+            <if  test="template_name != null  and template_name != ''">and a.template_name like #{template_name} </if>
+        </where>
+	</select>
+
+
+    <!--新增模板-->
+    <insert id="SaveTemplateLayout" parameterType="java.util.Map">
+		INSERT INTO template_layout(
+		template_name,template_type,width,height,base_map,
+		map_width,map_height,createTime,modifyDate,createUser,modifyUser,status
+		) VALUES(
+		#{template_name},#{template_type},#{width},#{height},
+		#{base_map},#{map_width},#{map_height},now(),now(),
+		'admin','admin',#{status}
+		)
+	</insert>
+
+    <!--查询新增模板，返回数据-->
+    <select id="SelectTemplateName" parameterType="java.util.Map" resultType="map">
+		select * from template_layout where template_name=#{template_name}
+	</select>
+
+
+    <!--查询模板返回数据-->
+    <select id="getTemplateDetailById" parameterType="String" resultMap="templateResultMap">
+	 	select
+				a.template_id,
+				a.template_name,
+				a.template_type,
+				a.width,
+				a.height,
+				a.base_map,
+				a.map_width,
+				a.map_height,
+				a.createTime,
+				a.modifyDate,
+				a.createUser,
+				a.modifyUser,a.status,
+				b.template_id,
+				b.control_name,
+				b.location_x,
+				b.location_y,
+				b.control_type,
+				b.control_shape,
+				b.qrcode
+ 			from template_layout a left join template_detail b
+ 			on a.template_id = b.template_id where a.template_id = #{template_id}
+	 </select>
+
+
+    <!--删除控件-->
+    <delete id="Deletetemplate_control"  parameterType="java.util.Map">
+			Delete From template_detail WHERE template_id=#{template_id} and control_name=#{control_name}
+	</delete>
+
+
+    <!--更新模板状态-->
+    <update id="updateTemplateLayoutStatus" parameterType="java.util.Map">
+	 	update template_layout set status = #{status} where template_id = #{template_id}
+	 </update>
+
+
+    <!--批量保存控件位置-->
+    <insert id="Inserttemplate_detail_Pach" parameterType="java.util.List" >
+        Insert Into template_detail (
+        template_id,
+        control_name,
+        location_x,
+        location_y,
+        control_type,
+        control_shape
+        )  values
+        <foreach collection="list" item="item" index="index"  separator=","  >
+            (
+            #{item.template_id},
+            #{item.control_name},
+            #{item.location_x},
+            #{item.location_y},
+            #{item.control_type},
+            #{item.control_shape}
+            )
+        </foreach>
+    </insert>
+
+    <!--验证模板名称唯一-->
+    <select id="SelectTemplateByName"  parameterType="String"
+            resultType="int" >
+		 select Count(*) from template_layout where template_name=#{template_name}
+	</select>
+
+    <!-- 根据模板ID从旧记录中复制一条数据 -->
+    <insert id="insertDataFromOldTemplateLayout" parameterType="java.util.Map">
+	 	INSERT INTO template_layout(
+	 	    template_name
+           ,template_type
+           ,width
+           ,height
+           ,base_map
+           ,map_width
+           ,map_height
+           ,createTime
+           ,modifyDate
+           ,createUser
+           ,modifyUser
+           ,status
+		)
+			select #{template_name},
+			template_type,
+			width,
+			height,
+			base_map,
+			map_width,
+			map_height,
+			createTime,
+			modifyDate,
+			createUser,
+			modifyUser,
+			#{status}
+			from template_layout where template_id = #{template_id}
+	 </insert>
+
+    <!-- 获取最大值的template_id -->
+    <select id="getMaxIdFromTemplateLayout" resultType="int">
+	 	select max(template_id)template_id from template_layout
+	 </select>
+
+    <!-- 修改模板详情表关联的模板ID -->
+    <update id="updateTemplateDetailById" parameterType="java.util.Map">
+        <!-- update template_detail set template_id = #{newTemplateId} where template_id = #{template_id} -->
+        insert into template_detail
+        select
+        #{newTemplateId},
+        control_name,
+        location_x,
+        location_y,
+        control_type,
+        control_shape
+        from template_detail where  template_id = #{template_id}
+    </update>
+
+    <!--根据ID删除所有控件-->
+    <delete id="deleteControlById" parameterType="String">
+	 	delete from template_detail where template_id=#{template_id}
+	 </delete>
+
+    <!-- 查询模板列表 -->
+    <select id="selectAllTemplateList" parameterType="java.util.Map" resultType="map">
+		select * from template_layout
+	</select>
+
+    <!--获取所属部门-->
+    <select id="selectAllSystem" parameterType="String" resultType="java.util.HashMap">
+		select distinct * From yx_device where device_type=2
+	</select>
+
+    <!--获取所属部门-->
+    <select id="getAllAssetTypeInfoList" parameterType="String" resultType="java.util.HashMap">
+		select distinct device_name From yx_device where device_type=2
+	</select>
+
+    <!--批量插入-->
+    <insert id="InsertTempContent_detail" parameterType="java.util.List" >
+        Insert Into template_detail (
+        qrcode
+        )  values
+        <foreach collection="list" item="item" index="index"  separator=","  >
+            (
+            #{item.qrcode}
+            )
+        </foreach>
+    </insert>
+
+
+    <!--针对单个控件进行关联 -->
+    <insert id="AssociateControl" parameterType="java.util.Map" >
+	 	insert into template_detail (
+	 	qrcode)values(
+	 	#{qrcode}
+	 	) where 1=1
+	 	control_name=#{control_name}
+	 	and template_id=#{template_id};
+	 </insert>
+
+
+    <!-- 模糊查询Qrcode清单 -->
+    <select id="SelectQrcodeCheckList" parameterType="java.util.Map" resultType="java.util.Map">
+        SELECT device_code FROM yx_device where device_type=2
+        <if test="dept_id != '' and dept_id != null">
+            and dept_id = #{dept_id}
+        </if>
+        <if test="device_name != '' and device_name != null">
+            and device_name = #{device_name}
+        </if>
+    </select>
+
+    <!-- 判断模板中哪些控件已经绑定过了 -->
+    <select id="checkControlSetUp" parameterType="java.util.Map" resultType="java.util.Map">
+	 	select * from template_detail where template_id=#{template_id} and qrcode=#{qrcode}
+	 </select>
+
+
+    <!-- 如果控件已绑定则更新控件 -->
+    <update id="updateTempContentByControlName" parameterType="java.util.Map">
+	 	update template_detail set
+		qrcode=#{qrcode}
+		where
+		template_id=#{template_id} and control_name=#{control_name}
+	 </update>
+
+    <select id="getTemplateDetailByMouldCode" parameterType="String" resultMap="templateResultMap">
+        select
+        a.template_id,
+        a.template_name,
+        a.template_type,
+        a.width,
+        a.height,
+        a.base_map,
+        a.map_width,
+        a.map_height,
+        a.createTime,
+        a.modifyDate,
+        a.createUser,
+        a.modifyUser,a.status,
+        b.template_id,
+        b.control_name,
+        b.location_x,
+        b.location_y,
+        b.control_type,
+        b.control_shape,
+        b.qrcode,
+        (select device_name from yx_device where device_code = b.qrcode)device_name,
+        (select count(*) from yx_device_day  where CreateTime  &gt;= DATE_SUB(NOW(),INTERVAL 5 MINUTE) and DeviceID=b.qrcode and SeatStatus  &lt;&gt; 0 ) idle,
+        (select count(*) from yx_device_day where CreateTime &gt;= DATE_SUB(NOW(),INTERVAL 30 MINUTE) and CreateTime &lt;= DATE_SUB(NOW(),INTERVAL 5 MINUTE) and DeviceID=b.qrcode and SeatStatus &lt;&gt; 0 ) depart
+        from template_layout a left join template_detail b
+        on a.template_id = b.template_id
+		where a.template_id = #{template_id}
+	 </select>
+
+    <!--查询设备使用状态-->
+    <select id="getDeviceSeatStatusBy" parameterType="String" resultType="int">
+        select count(*) from yx_device_day a
+        left join template_detail b
+        on a.DeviceID=b.qrcode
+        where
+        a.CreateTime>=DATE_SUB(NOW(),INTERVAL 5 MINUTE)
+        and a.SeatStatus=1
+        and b.control_name=#{control_name}
+        and b.template_id=#{template_id};
+    </select>
+
+    <!--校验绑定的编码是否已绑定-->
+    <select id="setUpQrCodeByTemplateId" parameterType="java.util.Map" resultType="int">
+        select count(*) from template_detail where template_id=#{template_id} and qrcode=#{qrcode};
+    </select>
+
+</mapper>

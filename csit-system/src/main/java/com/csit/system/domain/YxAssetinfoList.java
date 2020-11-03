@@ -1,0 +1,206 @@
+package com.csit.system.domain;
+
+import org.apache.commons.lang3.builder.ToStringBuilder;
+import org.apache.commons.lang3.builder.ToStringStyle;
+import com.csit.common.annotation.Excel;
+import com.csit.common.core.domain.BaseEntity;
+
+/**
+ * 产品信息对象 yx_assetinfo_list
+ * 
+ * @author csit
+ * @date 2019-12-14
+ */
+public class YxAssetinfoList extends BaseEntity
+{
+    private static final long serialVersionUID = 1L;
+
+    /** ID */
+    @Excel(name = "ID")
+    private Long id;
+
+    /** 二维码 */
+    @Excel(name = "二维码")
+    private String qrcode;
+
+    /** 显示码 */
+    @Excel(name = "显示码")
+    private String viewcode;
+
+    /** 制造商 */
+    @Excel(name = "制造商")
+    private String manufacturer;
+
+    /** 出厂日期 */
+    @Excel(name = "出厂日期")
+    private String productionDate;
+
+    /** 安装日期 */
+    @Excel(name = "安装日期")
+    private String installDate;
+
+    /** 保用期限 */
+    @Excel(name = "保用期限")
+    private String maintenancePeriod;
+
+    /** 客户名称 */
+    @Excel(name = "客户名称")
+    private String customerName;
+
+    /** 合同号 */
+    @Excel(name = "合同号")
+    private String contractNumber;
+
+    /** 产品名称 */
+    @Excel(name = "产品名称")
+    private String productName;
+
+    /** 单价 */
+    @Excel(name = "单价")
+    private Double unitPrice;
+
+    /** 备注1 */
+    @Excel(name = "备注1")
+    private String remark1;
+
+    /** 备注2 */
+    @Excel(name = "备注2")
+    private String remark2;
+
+    public void setId(Long id) 
+    {
+        this.id = id;
+    }
+
+    public Long getId() 
+    {
+        return id;
+    }
+    public void setQrcode(String qrcode) 
+    {
+        this.qrcode = qrcode;
+    }
+
+    public String getQrcode() 
+    {
+        return qrcode;
+    }
+    public void setViewcode(String viewcode) 
+    {
+        this.viewcode = viewcode;
+    }
+
+    public String getViewcode() 
+    {
+        return viewcode;
+    }
+    public void setManufacturer(String manufacturer) 
+    {
+        this.manufacturer = manufacturer;
+    }
+
+    public String getManufacturer() 
+    {
+        return manufacturer;
+    }
+    public void setProductionDate(String productionDate) 
+    {
+        this.productionDate = productionDate;
+    }
+
+    public String getProductionDate() 
+    {
+        return productionDate;
+    }
+    public void setInstallDate(String installDate)
+    {
+        this.installDate = installDate;
+    }
+
+    public String getInstallDate()
+    {
+        return installDate;
+    }
+    public void setMaintenancePeriod(String maintenancePeriod) 
+    {
+        this.maintenancePeriod = maintenancePeriod;
+    }
+
+    public String getMaintenancePeriod() 
+    {
+        return maintenancePeriod;
+    }
+    public void setCustomerName(String customerName) 
+    {
+        this.customerName = customerName;
+    }
+
+    public String getCustomerName() 
+    {
+        return customerName;
+    }
+    public void setContractNumber(String contractNumber) 
+    {
+        this.contractNumber = contractNumber;
+    }
+
+    public String getContractNumber() 
+    {
+        return contractNumber;
+    }
+    public void setProductName(String productName) 
+    {
+        this.productName = productName;
+    }
+
+    public String getProductName() 
+    {
+        return productName;
+    }
+    public void setUnitPrice(Double unitPrice) 
+    {
+        this.unitPrice = unitPrice;
+    }
+
+    public Double getUnitPrice() 
+    {
+        return unitPrice;
+    }
+    public void setRemark1(String remark1) 
+    {
+        this.remark1 = remark1;
+    }
+
+    public String getRemark1() 
+    {
+        return remark1;
+    }
+    public void setRemark2(String remark2) 
+    {
+        this.remark2 = remark2;
+    }
+
+    public String getRemark2() 
+    {
+        return remark2;
+    }
+
+    @Override
+    public String toString() {
+        return new ToStringBuilder(this,ToStringStyle.MULTI_LINE_STYLE)
+            .append("id", getId())
+            .append("qrcode", getQrcode())
+            .append("viewcode", getViewcode())
+            .append("manufacturer", getManufacturer())
+            .append("productionDate", getProductionDate())
+            .append("installDateinstall date", getInstallDate())
+            .append("maintenancePeriod", getMaintenancePeriod())
+            .append("customerName", getCustomerName())
+            .append("contractNumber", getContractNumber())
+            .append("productName", getProductName())
+            .append("unitPrice", getUnitPrice())
+            .append("remark1", getRemark1())
+            .append("remark2", getRemark2())
+            .toString();
+    }
+}

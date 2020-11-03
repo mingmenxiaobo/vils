@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增设备信息')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-device-add">
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.selectparent}]]：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input id="deviceType" name="deviceType" type="hidden" th:value="${yxDevice?.deviceType+1}"/>
+
+                        <input id="status" name="status" type="hidden" value="0"/>
+                        <input id="delFlag" name="delFlag" type="hidden" value="0"/>
+                        <input id="treeId" name="parentId" type="hidden" th:value="${yxDevice?.deviceId}"/>
+                        <input class="form-control" type="text" id="treeName" readonly="true" th:value="${yxDevice?.deviceName}">
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.deptid}]]：</label>
+                <div class="col-sm-8">
+                    <div class="input-group">
+                        <input id="deptId" name="deptId" type="hidden"  />
+                        <input name="treedeptName" onclick="selectDeptTree()" id="treedeptName" type="text" th:placeholder="#{user.title.dept}" class="form-control" required>
+                        <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.devicename}]]：</label>
+                <div class="col-sm-8">
+                    <input name="deviceName" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.devicesite}]]：</label>
+                <div class="col-sm-8">
+                    <input name="deviceSite" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.devicecode}]]：</label>
+                <div class="col-sm-8">
+                    <input name="deviceCode" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.devicemsisdn}]]：</label>
+                <div class="col-sm-8">
+                    <input name="deviceMsisdn" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.ordernum}]]：</label>
+                <div class="col-sm-8">
+                    <input name="orderNum" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.leader}]]：</label>
+                <div class="col-sm-8">
+                    <input name="leader" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.phone}]]：</label>
+                <div class="col-sm-8">
+                    <input name="phone" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.email}]]：</label>
+                <div class="col-sm-8">
+                    <input name="email" class="form-control" type="text">
+                </div>
+            </div>
+
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/device"
+        $("#form-device-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-device-add').serialize());
+            }
+        }
+
+        /*设备信息-新增-选择父部门树*/
+        function selectDeviceTree() {
+            var options = {
+                title: '[[#{device.title.deviceselect}]]',
+                width: "380",
+                url: prefix + "/selectDeviceTree/" + $("#treeId").val(),
+                callBack: doSubmitDev
+            };
+            $.modal.openOptions(options);
+        }
+        function doSubmitDev(index, layero){
+            var body = layer.getChildFrame('body', index);
+
+            $("#treeId").val(body.find('#treeId').val());
+            $("#treeName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+
+        /*用户管理-新增-选择部门树*/
+        function selectDeptTree() {
+            var treeId = $("#treeDeptId").val();
+            var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeDeptId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '[[#{device.title.selectmenu}]]',
+                width: "380",
+                url: url,
+                callBack: doSubmitDept
+            };
+            $.modal.openOptions(options);
+        }
+
+
+        function doSubmitDept(index, layero){
+            var body = layer.getChildFrame('body', index);
+
+            $("#deptId").val(body.find('#treeId').val());
+            $("#treedeptName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+
+
+
+        $(document).ready( function(){
+                var deviceType = $("#deviceType").val();
+
+                if (deviceType == "1") {
+
+                    $("input[name='orderNum']").parents(".form-group").show();
+                    $("input[name='leader']").parents(".form-group").show();
+                    $("input[name='phone']").parents(".form-group").show();
+                    $("input[name='email']").parents(".form-group").show();
+                    $("input[name='deviceMsisdn']").parents(".form-group").show();
+
+
+                } else  {
+
+                    $("input[name='orderNum']").parents(".form-group").hide();
+                    $("input[name='leader']").parents(".form-group").hide();
+                    $("input[name='phone']").parents(".form-group").hide();
+                    $("input[name='email']").parents(".form-group").hide();
+                    $("input[name='deviceMsisdn']").parents(".form-group").hide();
+
+
+                }
+            });
+
+    </script>
+</body>
+</html>

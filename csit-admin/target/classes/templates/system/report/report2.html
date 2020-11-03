@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('使用报表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p >[[#{device.title.deptid}]]：</p>
+                                    <div class="col-sm-3" style="padding: 0px">
+                                        <div class="input-group">
+                                            <input id="deptId" name="deptId" type="hidden"  />
+                                            <input style="width: 150px" name="treedeptName" onclick="selectDeptTree()" id="treedeptName" type="text" th:placeholder="#{user.title.dept}" class="form-control" required>
+
+                                        </div>
+                                    </div>
+
+                            </li>
+                            <li>
+                                <p>[[#{device.title.devicename}]]：</p>
+                                <input type="text" name="deviceName"/>
+                            </li>
+                            <li>
+                                <p>[[#{device.title.devicesite}]]：</p>
+                                <input type="text" name="deviceSite"/>
+                            </li>
+                            <li>
+                                <p>[[#{device.title.devicemsisdn}]]：</p>
+                                <input type="text" name="deviceMsisdn"/>
+                            </li>
+                            <li>
+                                <p>[[#{device.title.leader}]]：</p>
+                                <input type="text" name="leader"/>
+                            </li>
+                            <li>
+                                <p>[[#{device.title.status}]]：</p>
+                                <select name="status" th:with="type=${@dict.getType('sys_normal_disable')}">
+                                    <option value="">[[#{role.title.all}]]</option>
+                                    <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                                </select>
+                            </li>
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;[[#{public.button.query}]]</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;[[#{public.button.refresh}]]</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:report:export">
+            <i class="fa fa-download"></i> [[#{public.button.export}]]
+            </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+            </div>
+            </div>
+            </div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+
+        var removeFlag = [[${@permission.hasPermi('system:report:remove')}]];
+        var prefix = ctx + "system/report";
+
+        $(function() {
+            var options = {
+                url: prefix + "/list",
+                exportUrl: prefix + "/export",
+                modalName: "使用报告",
+                columns: [{
+                    checkbox: true
+                },
+
+                {
+                    field : 'viewcode',
+                    title : [[#{report.title.viewcode}]],
+                    align: 'left'
+                },
+                {
+                    field : 'manufacturer',
+                    title : [[#{report.title.manufacturer}]],
+                    align: 'left'
+                },
+                {
+                    field : 'customerName',
+                    title : [[#{report.title.customerName}]],
+                    align: 'left'
+                },
+                {
+                    field : 'productName',
+                    title : [[#{report.title.productName}]],
+                    align: 'left'
+                }
+                ,
+                {
+                    field : 'repDate',
+                    title : [[#{report.title.RepDate}]],
+                    align: 'left'
+                }
+                ,
+                {
+                    field : 'duration',
+                    title : [[#{report.title.duration}]],
+                    align: 'left'
+                }
+                ,
+                {
+                    field : 'free',
+                    title : [[#{report.title.free}]],
+                    align: 'left'
+                }
+                ,
+                {
+                    field : 'usep',
+                    title : [[#{report.title.usep}]],
+                    align: 'left'
+                }
+
+
+                 ]
+            };
+            $.table.init(options);
+        });
+
+
+        /*用户管理-新增-选择部门树*/
+        function selectDeptTree() {
+            var treeId = $("#treeDeptId").val();
+            var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeDeptId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: [[#{device.title.selectmenu}]],
+                width: "380",
+                url: url,
+                callBack: doSubmitDept
+            };
+            $.modal.openOptions(options);
+        }
+
+
+        function doSubmitDept(index, layero){
+            var body = layer.getChildFrame('body', index);
+
+            $("#deptId").val(body.find('#treeId').val());
+            $("#treedeptName").val(body.find('#treeName').val());
+            layer.close(index);
+        }
+    </script>
+</body>
+</html>

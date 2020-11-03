@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html style="height: 100%" lang="zh" xmlns:th="http://www.thymeleaf.org">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <script th:src="@{/js/jquery.min.js}"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+       <script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+       <script type="text/javascript">
+            var dom = document.getElementById("container");
+            var myChart = echarts.init(dom);
+            var normal = [];
+            var Abnormal = [];
+            var school = [];
+            $.ajax({
+                url: ctx+'system/school/getSchoolVision',
+                dataType: 'json',
+                type: 'post',
+                async: false,
+                success: function (res) {
+                    if (res[0].Code == 200) {
+                        for(var k=0;k<res[0].data.length;k++){
+                            normal.push(res[0].data[k].counta);
+                            Abnormal.push(res[0].data[k].countb)
+                            school.push(res[0].data[k].school);
+                        }
+                    }
+                },
+                error: function (error) {
+
+                }
+            });
+            var app = {};
+            option = null;
+            option = {
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                        type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                    }
+                },
+                legend: {
+                    data: ['视力正常人数（超过视力标准值）', '视力异常人数（低于视力标准值）']
+                },
+                grid: {
+                left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    containLabel: true
+            },
+            xAxis: [
+                    {
+                        type: 'category',
+                        data: school
+                    }
+                ],
+                yAxis: [
+                    {
+                        type: 'value'
+                    }
+                ],
+                series: [
+                    {
+                        name: '视力正常人数（双眼都高于视力标准）',
+                        type: 'bar',
+                        stack: '？？',
+                        data: normal
+                    },
+                    {
+                        name: '视力异常人数（任意眼视力低于视力标准）',
+                        type: 'bar',
+                        stack: '？？',
+                        data: Abnormal
+                    }
+                ]
+            };
+            ;
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+
+
+
+       </script>
+   </body>
+</html>

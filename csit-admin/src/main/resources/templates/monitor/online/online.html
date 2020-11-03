@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('在线用户列表')" />
+</head>
+<body class="gray-bg">
+    <div class="container-div">
+		<div class="row">
+			<div class="col-sm-12 search-collapse">
+				<form id="online-form">
+					<div class="select-list">
+						<ul>
+							<li>
+								[[#{online.title.loginaddr}]]：<input type="text" name="ipaddr"/>
+							</li>
+							<li>
+								[[#{online.title.loginname}]]：<input type="text" name="loginName"/>
+							</li>
+							<li>
+								<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;[[#{public.button.query}]]</a>
+								<a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;[[#{public.button.refresh}]]</a>
+							</li>
+						</ul>
+					</div>
+				</form>
+			</div>
+			
+	        <div class="btn-group-sm" id="toolbar" role="group">
+	            <a class="btn btn-danger multiple disabled" onclick="javascript:batchForceLogout()" shiro:hasPermission="monitor:online:batchForceLogout">
+	                <i class="fa fa-sign-out"></i> [[#{online.title.forceexit}]]
+	            </a>
+	        </div>
+	        
+	        <div class="col-sm-12 select-table table-striped">
+			    <table id="bootstrap-table"></table>
+			</div>
+		</div>
+	</div>
+	<th:block th:include="include :: footer" />
+	<script th:inline="javascript">
+		var forceFlag = [[${@permission.hasPermi('monitor:online:forceLogout')}]];
+		var prefix = ctx + "monitor/online";
+
+		$(function() {
+		    var options = {
+		    	uniqueId: "sessionId",
+		        url: prefix + "/list",
+		        exportUrl: prefix + "/export",
+		        sortName: "lastAccessTime",
+		        sortOrder: "desc",
+		        showExport: true,
+		        escape: true,
+		        columns: [{
+		            checkbox: true
+		        },
+		        {
+                    title: "序号",
+                    formatter: function (value, row, index) {
+                 	    return $.table.serialNumber(index);
+                    }
+                },
+		        {
+		            field: 'sessionId',
+		            title: [[#{online.title.sessionId}]]
+		        },
+		        {
+		            field: 'loginName',
+		            title: [[#{online.title.loginname}]],
+		            sortable: true
+		        },
+		        {
+		            field: 'deptName',
+		            title: [[#{online.title.deptname}]]
+		        },
+		        {
+		            field: 'ipaddr',
+		            title: [[#{online.title.ipaddr}]]
+		        },
+		        {
+		            field: 'loginLocation',
+		            title: [[#{online.title.loginlocation}]]
+		        },
+		        {
+		            field: 'browser',
+		            title: [[#{online.title.browser}]]
+		        },
+		        {
+		            field: 'os',
+		            title: [[#{online.title.os}]]
+		        },
+		        {
+		            field: 'status',
+		            title: [[#{online.title.status}]],
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		                if (value == 'on_line') {
+		                    return '<span class="badge badge-primary">[[#{index.main.online}]]</span>';
+		                } else if (value == 'off_line') {
+		                    return '<span class="badge badge-danger">[[#{online.title.signout}]]</span>';
+		                }
+		            }
+		        },
+		        {
+		            field: 'startTimestamp',
+		            title: [[#{online.title.starttimestamp}]],
+		            sortable: true
+		        },
+		        {
+		            field: 'lastAccessTime',
+		            title: [[#{online.title.lastaccesstime}]],
+		            sortable: true
+		        },
+		        {
+		            title: [[#{public.title.operation}]],
+		            align: 'center',
+		            formatter: function(value, row, index) {
+		                var msg = '<a class="btn btn-danger btn-xs ' + forceFlag + '" href="javascript:void(0)" onclick="forceLogout(\'' + row.sessionId + '\')"><i class="fa fa-sign-out"></i>[[#{online.title.forceexit}]]</a> ';
+		                return msg;
+		            }
+		        }]
+		    };
+		    $.table.init(options);
+		});
+
+		// 单条强退
+		function forceLogout(sessionId) {
+		    $.modal.confirm("确定要强制选中用户下线吗？", function() {
+		    	var data = { "sessionId": sessionId };
+		        $.operate.post(prefix + "/forceLogout", data);
+		    })
+		}
+
+		// 批量强退
+		function batchForceLogout() {
+		    var rows = $.table.selectColumns("sessionId");
+		    if (rows.length == 0) {
+		        $.modal.alertWarning("请选择要强退的用户");
+		        return;
+		    }
+		    $.modal.confirm("确认要强退选中的" + rows.length + "条数据吗?", function() {
+		        var url = prefix + "/batchForceLogout";
+		        var data = { "ids": rows };
+		        $.operate.post(url, data);
+		    });
+		}
+	</script>
+</body>
+</html>

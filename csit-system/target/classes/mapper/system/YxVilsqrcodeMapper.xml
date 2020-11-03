@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxVilsqrcodeMapper">
+    
+    <resultMap type="YxVilsqrcode" id="YxVilsqrcodeResult">
+        <result property="codeindex"    column="CodeIndex"    />
+        <result property="qrcode"    column="QrCode"    />
+    </resultMap>
+
+    <sql id="selectYxVilsqrcodeVo">
+        select CodeIndex, QrCode from yx_vilsqrcode
+    </sql>
+
+    <select id="selectYxVilsqrcodeList" parameterType="YxVilsqrcode" resultMap="YxVilsqrcodeResult">
+        <include refid="selectYxVilsqrcodeVo"/>
+        <where>  
+            <if test="params.beginCodeindex != null and params.beginCodeindex != '' and params.endCodeindex != null and params.endCodeindex != ''"> and CodeIndex between #{params.beginCodeindex} and #{params.endCodeindex}</if>
+            <if test="qrcode != null  and qrcode != ''"> and QrCode = #{qrcode}</if>
+        </where>
+    </select>
+    
+    <select id="selectYxVilsqrcodeById" parameterType="Long" resultMap="YxVilsqrcodeResult">
+        <include refid="selectYxVilsqrcodeVo"/>
+        where CodeIndex = #{codeindex}
+    </select>
+        
+    <insert id="insertYxVilsqrcode" parameterType="YxVilsqrcode">
+        insert into yx_vilsqrcode
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="codeindex != null ">CodeIndex,</if>
+            <if test="qrcode != null  and qrcode != ''">QrCode,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="codeindex != null ">#{codeindex},</if>
+            <if test="qrcode != null  and qrcode != ''">#{qrcode},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertYxVilsqrcodeBatch" parameterType="java.util.List" >
+        insert into yx_vilsqrcode (CodeIndex,QrCode)
+        <trim prefix="values "   suffixOverrides=",">
+            <foreach item="item" collection="list"  index="index" >
+                (${item.codeindex},'${item.qrcode}'),
+            </foreach>
+        </trim>
+    </insert>
+
+    <update id="updateYxVilsqrcode" parameterType="YxVilsqrcode">
+        update yx_vilsqrcode
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qrcode != null  and qrcode != ''">QrCode = #{qrcode},</if>
+        </trim>
+        where CodeIndex = #{codeindex}
+    </update>
+
+    <delete id="deleteYxVilsqrcodeById" parameterType="Long">
+        delete from yx_vilsqrcode where CodeIndex = #{codeindex}
+    </delete>
+
+    <delete id="deleteYxVilsqrcodeByIds" parameterType="String">
+        delete from yx_vilsqrcode where CodeIndex in 
+        <foreach item="codeindex" collection="array" open="(" separator="," close=")">
+            #{codeindex}
+        </foreach>
+    </delete>
+    
+</mapper>

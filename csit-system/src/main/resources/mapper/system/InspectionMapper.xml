@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.InspectionMapper">
+    <!--<select id="selectInspectionById" parameterType="String" resultType="com.csit.system.domain.InspectionAir">
+        select * from inspection_air where id = #{id}
+    </select>
+
+    <select id="selectInspectionByQrCode" parameterType="String" resultType="com.csit.system.domain.InspectionAir">
+        select * from inspection_air where id = #{qrcode}
+    </select>
+
+    <insert id="insertInspection" parameterType="com.csit.system.domain.InspectionAir">
+        insert into inspection_air (
+            qrcode,interval_time,isenable,isalarm,isip,tempera_ture,remarks,
+            createuser,createdate,orderno,status
+        ) values (
+            #{qrcode},#{interval_time},#{isenable},#{isalarm},#{isip},#{tempera_ture},#{remarks},
+            #{createuser},#{createdate},#{}orderno,#{status}
+        )
+    </insert>
+
+
+    <update id="updateInspectionById" parameterType="com.csit.system.domain.InspectionAir">
+        update  inspection_air set
+            qrcode=#{qrcode},interval_time=#{interval_time},isenable=#{isenable},isalarm=#{isalarm},isip=#{isip},
+            tempera_ture=#{tempera_ture},remarks=#{remarks},createuser=#{createuser},createdate=now(),orderno=#{orderno},
+            status=#{status} where id=#{id}
+    </update>
+
+    <delete id="deleteInspectionById" parameterType="String">
+        delete from inspection_air where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>-->
+</mapper>

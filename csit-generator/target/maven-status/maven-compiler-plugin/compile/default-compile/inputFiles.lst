@@ -1,0 +1,13 @@
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\util\VelocityUtils.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\domain\GenTable.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\domain\GenTableColumn.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\mapper\GenTableMapper.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\util\VelocityInitializer.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\service\IGenTableColumnService.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\config\GenConfig.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\controller\GenController.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\service\impl\GenTableServiceImpl.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\util\GenUtils.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\mapper\GenTableColumnMapper.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\service\IGenTableService.java
+E:\ideawork\chuangsuoit\csit-generator\src\main\java\com\csit\generator\service\impl\GenTableColumnServiceImpl.java

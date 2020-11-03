@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+	<th:block th:include="include :: header('Add User')" />
+	<th:block th:include="include :: select2-css" />
+</head>
+<body>
+    <div class="main-content">
+        <form id="form-user-add" class="form-horizontal" th:object="${list}">
+            <h4 class="form-header h4">学生详细信息</h4>
+            <div class="row">
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>学生姓名：</label>
+                        <div class="col-sm-8">
+                            <input name="studentName" id="studentName" class="form-control" type="text" th:field="*{studentName}" maxlength="30" readonly required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>学号：</label>
+                        <div class="col-sm-8">
+                            <input name="studentCode" id="studentCode" class="form-control" type="text" th:field="*{studentCode}"  maxlength="30"  readonly required>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>左眼视力：</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="lefteyeVision"  name="lefteyeVision" required/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>右眼视力：</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="righteyeVision"   name="righteyeVision" required/>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-6">
+                    <div class="form-group">
+                        <label class="col-sm-4 control-label"><span style="color: red; ">*</span>每天使用电子设备时间(小时)：</label>
+                        <div class="col-sm-8">
+                            <input type="text" class="form-control" id="time"   name="time" required/>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+      
+    <div class="row">
+        <div class="col-sm-offset-5 col-sm-10">
+            <button type="button" class="btn btn-sm btn-primary" onclick="submitHandler()"><i class="fa fa-check"></i>[[#{public.button.save}]]</button>&nbsp;
+            <button type="button" class="btn btn-sm btn-danger" onclick="closeItem()"><i class="fa fa-reply-all"></i>[[#{public.button.shutdown}]]</button>
+        </div>
+    </div>
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: select2-js" />
+	<script>
+	    var prefix = ctx + "system/countlist";
+	
+        $("#form-user-add").validate({
+        	onkeyup: false,
+            focusCleanup: true
+        });
+        
+        function submitHandler() {
+	        if ($.validate.form()) {
+	        	var data = $("#form-user-add").serializeArray();
+	        	$.operate.saveTab(prefix + "/detailslist", data);
+	        }
+	    }
+
+    </script>
+</body>
+</html>

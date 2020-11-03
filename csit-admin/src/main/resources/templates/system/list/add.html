@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('新增产品信息')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-list-add">
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{list.title.viewCode}]]：</label>
+                <div class="col-sm-8">
+                    <input name="viewcode" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{list.title.manufacturer}]]：</label>
+                <div class="col-sm-8">
+                    <input name="manufacturer" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{list.title.productiondate}]]：</label>
+                <div class="col-sm-8">
+                    <input name="productionDate" class="time-input"  type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{list.title.installdate}]]：</label>
+                <div class="col-sm-8">
+                    <input name="installDate" class="time-input" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{list.title.maintenanceperiod}]]：</label>
+                <div class="col-sm-8">
+                    <input name="maintenancePeriod"  class="time-input"  type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{list.title.customername}]]：</label>
+                <div class="col-sm-8">
+                    <input name="customerName" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{list.title.contractnumber}]]：</label>
+                <div class="col-sm-8">
+                    <input name="contractNumber" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{list.title.productname}]]：</label>
+                <div class="col-sm-8">
+                    <input name="productName" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{list.title.unitprice}]]：</label>
+                <div class="col-sm-8">
+                    <input name="unitPrice" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">[[#{list.title.remark1}]]：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark1" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-sm-3 control-label">[[#{list.title.remark2}]]：</label>
+                <div class="col-sm-8">
+                    <textarea name="remark2" class="form-control"></textarea>
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/list"
+        $("#form-list-add").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/add", $('#form-list-add').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

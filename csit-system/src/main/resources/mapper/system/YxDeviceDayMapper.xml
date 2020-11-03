@@ -1,0 +1,220 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxDeviceDayMapper">
+    
+    <resultMap type="YxDeviceDay" id="YxDeviceDayResult">
+        <result property="id"    column="ID"    />
+        <result property="deviceid"    column="DeviceID"    />
+        <result property="gatewayid"    column="GatewayID"    />
+        <result property="high"    column="High"    />
+        <result property="seatstatus"    column="SeatStatus"    />
+        <result property="createtime"    column="CreateTime"    />
+        <result property="duration"    column="Duration"    />
+        <result property="starttime"    column="StartTime"    />
+    </resultMap>
+
+    <resultMap type="YxDeviceDay" id="YxDeviceMonthResult">
+        <result property="id"    column="ID"    />
+        <result property="deviceid"    column="DeviceID"    />
+        <result property="gatewayid"    column="GatewayID"    />
+        <result property="high"    column="High"    />
+        <result property="seatstatus"    column="SeatStatus"    />
+        <result property="createtime"    column="CreateTime"    />
+        <result property="duration"    column="Duration"    />
+        <result property="starttime"    column="StartTime"    />
+    </resultMap>
+    <resultMap type="YxDeviceDay" id="YxDeviceYearResult">
+        <result property="id"    column="ID"    />
+        <result property="deviceid"    column="DeviceID"    />
+        <result property="gatewayid"    column="GatewayID"    />
+        <result property="high"    column="High"    />
+        <result property="seatstatus"    column="SeatStatus"    />
+        <result property="createtime"    column="CreateTime"    />
+        <result property="duration"    column="Duration"    />
+        <result property="starttime"    column="StartTime"    />
+    </resultMap>
+
+    <resultMap type="YxDeviceDay" id="YxDeviceUseCountResult">
+        <result property="seatstatus"    column="SeatStatus"    />
+        <result property="duration"    column="Duration"    />
+        <result property="starttime"    column="StartTime"    />
+    </resultMap>
+
+    <sql id="selectYxDeviceDayVo">
+        select ID, DeviceID, GatewayID, High, SeatStatus, CreateTime, Duration, StartTime  from yx_device_day
+    </sql>
+    <sql id="selectYxDeviceMonthVo">
+        select ID, DeviceID, GatewayID, High, SeatStatus, CreateTime, Duration, StartTime  from yx_device_month
+    </sql>
+    <sql id="selectYxDeviceYearVo">
+        select ID, DeviceID, GatewayID, High, SeatStatus, CreateTime, Duration, StartTime  from yx_device_year
+    </sql>
+
+    <select id="selectYxDeviceDayList" parameterType="YxDeviceDay" resultMap="YxDeviceDayResult">
+        <include refid="selectYxDeviceDayVo"/>
+        <where>  
+            <if test="deviceid != null  and deviceid != ''"> and DeviceID = #{deviceid}</if>
+            <if test="gatewayid != null  and gatewayid != ''"> and GatewayID = #{gatewayid}</if>
+            <if test="high != null "> and High = #{high}</if>
+            <if test="seatstatus != null "> and SeatStatus = #{seatstatus}</if>
+            <if test="createtime != null "> and CreateTime >= #{createtime}</if>
+            <if test="duration != null "> and Duration = #{duration}</if>
+            <if test="starttime != null  and starttime != ''"> and StartTime = #{starttime}</if>
+        </where>
+        order by CreateTime desc limit 100
+    </select>
+    
+    <select id="selectYxDeviceDayById" parameterType="String" resultMap="YxDeviceDayResult">
+        <include refid="selectYxDeviceDayVo"/>
+        where ID = #{id}
+    </select>
+        
+    <insert id="insertYxDeviceDay" parameterType="YxDeviceDay">
+        insert into yx_device_day
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">ID,</if>
+            <if test="deviceid != null  and deviceid != ''">DeviceID,</if>
+            <if test="gatewayid != null  and gatewayid != ''">GatewayID,</if>
+            <if test="high != null ">High,</if>
+            <if test="seatstatus != null ">SeatStatus,</if>
+            <if test="createtime != null ">CreateTime,</if>
+            <if test="duration != null ">Duration,</if>
+            <if test="starttime != null  and starttime != ''">StartTime,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null  and id != ''">#{id},</if>
+            <if test="deviceid != null  and deviceid != ''">#{deviceid},</if>
+            <if test="gatewayid != null  and gatewayid != ''">#{gatewayid},</if>
+            <if test="high != null ">#{high},</if>
+            <if test="seatstatus != null ">#{seatstatus},</if>
+            <if test="createtime != null ">#{createtime},</if>
+            <if test="duration != null ">#{duration},</if>
+            <if test="starttime != null  and starttime != ''">#{starttime},</if>
+         </trim>
+    </insert>
+
+
+
+    <insert id="insertDeviceDayBatch" parameterType="java.util.List" >
+        insert into yx_device_day(ID,DeviceID,GatewayID,High,SeatStatus,CreateTime, Duration, StartTime )
+        <trim prefix="values "   suffixOverrides=",">
+        <foreach item="item" collection="list"  index="index" >
+            ('${item.id}','${item.deviceid}','${item.gatewayid}',
+          ${item.high},${item.seatstatus},'${item.createtime}',${item.duration},'${item.starttime}'),
+        </foreach>
+        </trim>
+    </insert>
+
+    <update id="updateYxDeviceDay" parameterType="YxDeviceDay">
+        update yx_device_day
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceid != null  and deviceid != ''">DeviceID = #{deviceid},</if>
+            <if test="gatewayid != null  and gatewayid != ''">GatewayID = #{gatewayid},</if>
+            <if test="high != null ">High = #{high},</if>
+            <if test="seatstatus != null ">SeatStatus = #{seatstatus},</if>
+            <if test="createtime != null ">CreateTime = #{createtime},</if>
+            <if test="duration != null ">Duration=#{duration},</if>
+            <if test="starttime != null  and starttime != ''">StartTime =#{starttime},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteYxDeviceDayById" parameterType="String">
+        delete from yx_device_day where ID = #{id}
+    </delete>
+
+    <delete id="deleteYxDeviceDayByIds" parameterType="String">
+        delete from yx_device_day where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+
+    <!--根据设备id获取最新的一条记录-->
+    <select id="selectNewestDataByDeviceId" parameterType="java.util.Map" resultMap="YxDeviceDayResult">
+       select ID, DeviceID, GatewayID, High,CreateTime,
+        case  SeatStatus  when '0' then 0 when '1' then	0 else Duration end  Duration,
+        case  SeatStatus  when '0' then 0 when '1' then Duration else 0 end  SeatStatus,
+        case  SeatStatus  when '0' then '空闲'  else '使用' end  StartTime
+        from yx_device_day as a, (select device_id from yx_device_config where qrcode =#{qrcode}) as b
+    where a.DeviceID=b.device_id order by CreateTime desc limit 1;
+    </select>
+    <!--查询当天累计站立次数-->
+    <select id="selectDayStandUpTimesByOpenIdAndDeviceId" parameterType="java.lang.String" resultType="int">
+        select count(*) from yx_device_day where
+        CreateTime &lt; NOW() and CreateTime &gt; CONCAT(curdate(),' 08:00:00') and High &gt; 1000 and and deviceId in(
+          select device_id from(
+              select device_id from yx_qrcode_config a inner join yx_device_config b on a.qrcode = b.qrcode  order by a.update_time+1 desc limit 1
+            )temp
+        )
+    </select>
+    <!--查询当天累计坐的时长-->
+    <select id="selectDaySitDownTimesByOpenIdAndDeviceId" parameterType="java.lang.String" resultType="int">
+        select count(*) from yx_device_day where
+        CreateTime &lt; NOW() and CreateTime &gt; CONCAT(curdate(),' 08:00:00') and High &lt; 1000
+        and deviceId in(
+          select device_id from(
+              select device_id from yx_qrcode_config a inner join yx_device_config b on a.qrcode = b.qrcode and openid = #{openid} order by a.update_time+1 desc limit 1
+            )temp
+        )
+    </select>
+    <!--查询当日数据-->
+    <select id="selectDayDataByDeviceId" parameterType="java.util.Map" resultMap="YxDeviceDayResult">
+    select ID, DeviceID, GatewayID, High, Duration, SeatStatus, replace(CreateTime,CURDATE(),'') CreateTime
+from yx_device_day as a,(select device_id from yx_device_config where qrcode =#{qrcode}) as b
+where a.DeviceID=b.device_id and CreateTime &gt;=CURDATE()  order by CreateTime  ;
+    </select>
+    <!--查询当月数据-->
+    <select id="selectMonthDataByDeviceId" parameterType="java.util.Map" resultMap="YxDeviceMonthResult">
+        select ID, DeviceID, GatewayID, High, Duration, SeatStatus, replace(CreateTime,concat(YEAR(NOW()),'-'),'') CreateTime
+        from yx_device_month as a,(select device_id from yx_device_config where qrcode=#{qrcode}) as b
+        where a.DeviceID=b.device_id and CreateTime &gt;=date_add(curdate(), interval - day(curdate()) + 1 day) order by CreateTime  ;
+    </select>
+    <!--查询当年数据-->
+    <select id="selectYearDataByDeviceId" parameterType="java.util.Map" resultMap="YxDeviceYearResult">
+    select ID, DeviceID, GatewayID, ifnull(High,0) High, Duration, SeatStatus, CreateTime
+    from yx_device_year as a,(select device_id from yx_device_config where qrcode=#{qrcode}) as b
+    where a.DeviceID=b.device_id and CreateTime    like concat('%', YEAR(NOW()), '%')  order by CreateTime ;
+    </select>
+    <!--获取当天累计坐的时长和站的时长及次数-->
+    <select id="selectUsedTimeByDeviceId" parameterType="java.util.Map" resultMap="YxDeviceUseCountResult">
+     select sum(Duration) Duration , count(Duration) StartTime, SeatStatus from (
+        select  max(Duration) Duration , StartTime,SeatStatus
+        from yx_device_day as a,(select device_id from yx_device_config where qrcode =#{qrcode}) as b
+        where a.DeviceID=b.device_id and CreateTime &gt;= CURDATE() group by  StartTime, SeatStatus
+        ) a GROUP BY SeatStatus
+
+    </select>
+    <!--查询时间段内久坐次数-->
+    <select id="selectSitNumByDeviceId" parameterType="java.util.Map" resultType="int">
+        select count(*) num  from (
+        select max( Duration),StartTime
+        from yx_device_day as a,(select device_id from yx_device_config where qrcode =#{qrcode}) as b
+        where a.DeviceID=b.device_id and CreateTime &gt;=CURDATE()and Duration  &gt;= 60  and SeatStatus=1 group by StartTime
+        ) a
+    </select>
+    <!--查询时间段内最大久坐时长-->
+    <select id="selectMaxSitTimeByDeviceId" parameterType="java.util.Map" resultType="int">
+       select  ifnull(max(Duration),0) Duration
+        from yx_device_day as a,(select device_id from yx_device_config where qrcode =#{qrcode}) as b
+        where a.DeviceID=b.device_id and CreateTime  &gt;=  CURDATE() and Duration  &gt;= 60 and SeatStatus=1
+    </select>
+    <!--查询时间段内最大连续站立时长-->
+    <select id="selectMaxStandTimeByDeviceId" parameterType="java.util.Map" resultType="int">
+        select  ifnull(max(Duration),0) Duration
+        from yx_device_day as a,(select device_id from yx_device_config where qrcode =#{qrcode}) as b
+        where a.DeviceID=b.device_id and CreateTime &gt;=CURDATE() and SeatStatus=2
+    </select>
+    <!--查询时间段内站的次数-->
+    <select id="selectStandNumByDeviceId" parameterType="java.util.Map" resultType="int">
+        select count(*) from yx_device_day where deviceId =#{deviceId} and CreateTime between #{startTime} and #{endTime} and seatstatus ='2'
+    </select>
+    <!--查询时间段内站平均每次站立时长-->
+    <select id="selectAvgStandTimeByDeviceId" parameterType="java.util.Map" resultType="int">
+        select avg(Duration)Duration from yx_device_day where deviceId =#{deviceId} and CreateTime between #{startTime} and #{endTime} and seatstatus ='2'
+    </select>
+    
+</mapper>

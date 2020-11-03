@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxAssetMonthReportMapper">
+    
+    <resultMap type="YxAssetMothReport" id="YxAssetMonthReportResult">
+        <result property="id"    column="ID"    />
+        <result property="qrcode"    column="Qrcode"    />
+        <result property="viewcode"    column="viewCode"    />
+        <result property="manufacturer"    column="manufacturer"    />
+        <result property="productionDate"    column="production_date"    />
+        <result property="installDate"    column="install_date"    />
+        <result property="maintenancePeriod"    column="maintenance_period"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="contractNumber"    column="contract_number"    />
+        <result property="productName"    column="product_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="remark1"    column="remark1"    />
+        <result property="remark2"    column="remark2"    />
+        <result property="duration"    column="Duration"    />
+        <result property="free"    column="Free"    />
+        <result property="RepDate"    column="CreateTime"    />
+        <result property="usep"    column="usep"    />
+        <result property="unusep"    column="unusep"    />
+        <result property="deptId"    column="deptId"    />
+        <result property="endDay"    column="endDay"    />
+        <result property="freeDay"    column="FreeDay"    />
+        <result property="useDay"    column="UseDay"    />
+
+    </resultMap>
+
+    <select  id="AssetMothReport" parameterType="YxAssetMothReport" resultMap="YxAssetMonthReportResult">
+       select al.*, concat(#{params.beginRepDate},' ',#{params.endRepDate}) endDay ,
+        ifnull(A.UseDay,0) UseDay,ifnull(A.Duration,0) Duration ,
+        ifnull(B.FreeDay,0) FreeDay ,ifnull(B.Duration,0) Free,
+        case  ifnull(A.Duration,0) when 0 then 0
+        else
+        ifnull(A.Duration,0)*100/(ifnull(A.Duration,0)+ifnull(B.Duration,0))
+        end usep,
+        case  ifnull(A.Duration,0) when 0 then 100
+        else
+        ifnull(B.Duration,0)*100/(ifnull(A.Duration,0)+ifnull(B.Duration,0))
+        end unusep
+        from (
+        select al.*,dc.device_id from  yx_device_config dc,yx_assetinfo_list al
+        where dc.qrcode=al.Qrcode
+        ) AL left join
+        (
+        select a.DeviceID,
+        a.CreateTime,a.useStatus ,count(a.Duration)/3 UseDay,sum(a.Duration) Duration  from (
+        select m.* from yx_device_month m ,( select a.* from (
+        select a.*,ifnull(b.status,a.db_status) status
+        from yx_holiday_all_year a left join ( select * from yx_holiday
+        <if test="deptId != null and deptId != 0"> where dept=#{deptId}</if>
+        ) b on a.repDate=b.repdate
+        <if test="params.beginRepDate != null and params.beginRepDate != '' and params.endRepDate != null and params.endRepDate != ''">
+            where  a.repDate between #{params.beginRepDate} and #{params.endRepDate}
+        </if>
+        ) as a where a.status=1 order by a.repDate
+        ) as ymd where m.CreateTime=ymd.repDate and useStatus=1
+        ) as a group by a.DeviceID,a.useStatus
+        ) as A
+        on AL.device_id=A.DeviceID
+        left join
+        (
+        select a.DeviceID, a.CreateTime,a.useStatus ,count(a.Duration) FreeDay,sum(a.Duration) Duration from (
+        select m.* from yx_device_month m ,(
+        select a.* from ( select a.*,ifnull(b.status,a.db_status) status from yx_holiday_all_year a
+        left join ( select * from yx_holiday
+        <if test="deptId != null and deptId != 0"> where dept=#{deptId} </if>
+        ) b on a.repDate=b.repdate
+        <if test="params.beginRepDate != null and params.beginRepDate != '' and params.endRepDate != null and params.endRepDate != ''">
+            where  a.repDate between #{params.beginRepDate} and #{params.endRepDate}
+        </if>
+        ) as a where a.status=1 order by a.repDate ) as ymd where m.CreateTime=ymd.repDate and useStatus=0 and Duration &lt; 1
+        ) as a group by a.DeviceID,a.useStatus
+        ) as B
+        on  Al.device_id=B.DeviceID
+        <where>
+
+            <if test="deptId != null and deptId != 0">
+            and  Al.device_id in (
+            select device_code from yx_device where
+            dept_id in (
+            select dept_id from  sys_dept where dept_id=#{deptId} or  dept_id in
+            (SELECT t.dept_id FROM sys_dept t  WHERE FIND_IN_SET(#{deptId}, ancestors))) and device_type=2)
+            </if>
+            <if test="viewcode != null  and viewcode != ''"> and AL.viewCode like concat('%', #{viewcode}, '%')</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and AL.manufacturer  like concat('%', #{manufacturer}, '%')</if>
+            <if test="customerName != null  and customerName != ''"> and AL.customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="productName != null  and productName != ''"> and AL.product_name like concat('%', #{productName}, '%')</if>
+        </where>
+        order by A.CreateTime
+
+    </select>
+    
+
+    
+</mapper>

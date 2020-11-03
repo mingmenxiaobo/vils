@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxAssetfaultlogMapper">
+    
+    <resultMap type="YxAssetfaultlog" id="YxAssetfaultlogResult">
+        <result property="id"    column="ID"    />
+        <result property="qrcode"    column="qrcode"    />
+        <result property="fault"    column="fault"    />
+        <result property="repair"    column="Repair"    />
+        <result property="createby"    column="CreateBy"    />
+        <result property="createtime"    column="CreateTime"    />
+    </resultMap>
+
+    <sql id="selectYxAssetfaultlogVo">
+        select ID, qrcode, fault, Repair, CreateBy, CreateTime from yx_assetfaultlog
+    </sql>
+
+    <select id="selectYxAssetfaultlogList" parameterType="YxAssetfaultlog" resultMap="YxAssetfaultlogResult">
+        <include refid="selectYxAssetfaultlogVo"/>
+        <where>  
+            <if test="qrcode != null  and qrcode != ''"> and qrcode = #{qrcode}</if>
+         </where>
+        order by CreateTime desc
+    </select>
+    
+    <select id="selectYxAssetfaultlogById" parameterType="Long" resultMap="YxAssetfaultlogResult">
+        <include refid="selectYxAssetfaultlogVo"/>
+        where ID = #{id}
+    </select>
+        
+    <insert id="insertYxAssetfaultlog" parameterType="YxAssetfaultlog" useGeneratedKeys="true" keyProperty="id">
+        insert into yx_assetfaultlog
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qrcode != null  and qrcode != ''">qrcode,</if>
+            <if test="fault != null  and fault != ''">fault,</if>
+            <if test="repair != null  and repair != ''">Repair,</if>
+            <if test="createby != null  and createby != ''">CreateBy,</if>
+            CreateTime
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qrcode != null  and qrcode != ''">#{qrcode},</if>
+            <if test="fault != null  and fault != ''">#{fault},</if>
+            <if test="repair != null  and repair != ''">#{repair},</if>
+            <if test="createby != null  and createby != ''">#{createby},</if>
+            now()
+         </trim>
+    </insert>
+
+    <update id="updateYxAssetfaultlog" parameterType="YxAssetfaultlog">
+        update yx_assetfaultlog
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qrcode != null  and qrcode != ''">qrcode = #{qrcode},</if>
+            <if test="fault != null  and fault != ''">fault = #{fault},</if>
+            <if test="repair != null  and repair != ''">Repair = #{repair},</if>
+            <if test="createby != null  and createby != ''">CreateBy = #{createby},</if>
+            <if test="createtime != null ">CreateTime = #{createtime},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteYxAssetfaultlogById" parameterType="Long">
+        delete from yx_assetfaultlog where ID = #{id}
+    </delete>
+
+    <delete id="deleteYxAssetfaultlogByIds" parameterType="String">
+        delete from yx_assetfaultlog where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

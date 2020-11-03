@@ -1,0 +1,44 @@
+18:34:58.611 [restartedMain] INFO  c.c.CsitApplication - [logStarting,50] - Starting CsitApplication on MacBook-Proharry.local with PID 35446 (/Users/harryzhu/Downloads/chuangsuoit/chuangsuoit/out/artifacts/csit_jar/csit.jar started by harryzhu in /Users/harryzhu/Downloads/chuangsuoit/chuangsuoit/out/artifacts/csit_jar)
+18:34:58.620 [restartedMain] INFO  c.c.CsitApplication - [logStartupProfileInfo,679] - The following profiles are active: druid
+18:35:01.514 [restartedMain] INFO  o.a.s.c.e.EhCacheManager - [getCache,158] - Cache with name 'com.csit.framework.shiro.realm.UserRealm.authorizationCache' does not yet exist.  Creating now.
+18:35:01.515 [restartedMain] INFO  o.a.s.c.e.EhCacheManager - [getCache,165] - Added EhCache named [com.csit.framework.shiro.realm.UserRealm.authorizationCache]
+18:35:02.765 [restartedMain] INFO  o.a.s.c.e.EhCacheManager - [getCache,169] - Using existing EHCache named [loginRecordCache]
+18:35:03.168 [restartedMain] INFO  o.a.s.c.e.EhCacheManager - [getCache,169] - Using existing EHCache named [sys-userCache]
+18:35:03.169 [restartedMain] INFO  o.a.s.c.e.EhCacheManager - [getCache,169] - Using existing EHCache named [sys-userCache]
+18:35:03.779 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Initializing ProtocolHandler ["https-jsse-nio-443"]
+18:35:03.787 [restartedMain] INFO  o.a.c.c.StandardService - [log,173] - Starting service [Tomcat]
+18:35:03.788 [restartedMain] INFO  o.a.c.c.StandardEngine - [log,173] - Starting Servlet Engine: Apache Tomcat/9.0.13
+18:35:03.803 [restartedMain] INFO  o.a.c.c.AprLifecycleListener - [log,173] - The APR based Apache Tomcat Native library which allows optimal performance in production environments was not found on the java.library.path: [/Users/harryzhu/Library/Java/Extensions:/Library/Java/Extensions:/Network/Library/Java/Extensions:/System/Library/Java/Extensions:/usr/lib/java:.]
+18:35:03.892 [restartedMain] INFO  o.a.c.c.C.[.[.[/] - [log,173] - Initializing Spring embedded WebApplicationContext
+18:35:05.420 [restartedMain] INFO  c.a.d.p.DruidDataSource - [init,991] - {dataSource-1} inited
+18:35:05.486 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1208] - Using default implementation for ThreadExecutor
+18:35:05.510 [restartedMain] INFO  o.q.c.SchedulerSignalerImpl - [<init>,61] - Initialized Scheduler Signaller of type: class org.quartz.core.SchedulerSignalerImpl
+18:35:05.510 [restartedMain] INFO  o.q.c.QuartzScheduler - [<init>,229] - Quartz Scheduler v.2.3.0 created.
+18:35:05.518 [restartedMain] INFO  o.q.c.QuartzScheduler - [initialize,294] - Scheduler meta-data: Quartz Scheduler (v2.3.0) 'CsitScheduler' with instanceId 'MacBook-Proharry.local1592908505491'
+  Scheduler class: 'org.quartz.core.QuartzScheduler' - running locally.
+  NOT STARTED.
+  Currently in standby mode.
+  Number of jobs executed: 0
+  Using thread pool 'org.quartz.simpl.SimpleThreadPool' - with 20 threads.
+  Using job-store 'org.springframework.scheduling.quartz.LocalDataSourceJobStore' - which supports persistence. and is clustered.
+
+18:35:05.519 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1362] - Quartz scheduler 'CsitScheduler' initialized from an externally provided properties instance.
+18:35:05.519 [restartedMain] INFO  o.q.i.StdSchedulerFactory - [instantiate,1366] - Quartz scheduler version: 2.3.0
+18:35:05.522 [restartedMain] INFO  o.q.c.QuartzScheduler - [setJobFactory,2287] - JobFactory set to: org.springframework.scheduling.quartz.AdaptableJobFactory@2cc83460
+18:35:09.586 [restartedMain] INFO  s.d.s.w.PropertySourcedRequestMappingHandlerMapping - [initHandlerMethods,69] - Mapped URL path [/v2/api-docs] onto method [public org.springframework.http.ResponseEntity<springfox.documentation.spring.web.json.Json> springfox.documentation.swagger2.web.Swagger2Controller.getDocumentation(java.lang.String,javax.servlet.http.HttpServletRequest)]
+18:35:10.546 [restartedMain] INFO  s.d.s.w.p.DocumentationPluginsBootstrapper - [start,160] - Context refreshed
+18:35:10.577 [restartedMain] INFO  s.d.s.w.p.DocumentationPluginsBootstrapper - [start,163] - Found 1 custom documentation plugin(s)
+18:35:10.670 [restartedMain] INFO  s.d.s.w.s.ApiListingReferenceScanner - [scan,41] - Scanning for api listing references
+18:35:10.887 [restartedMain] INFO  s.d.s.w.r.o.CachingOperationNameGenerator - [startingWith,40] - Generating unique operation named: DeviceDataListUsingGET_1
+18:35:10.969 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Starting ProtocolHandler ["https-jsse-nio-443"]
+18:35:10.993 [restartedMain] INFO  o.a.t.u.n.NioSelectorPool - [log,173] - Using a shared selector for servlet write/read
+18:35:11.005 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Pausing ProtocolHandler ["https-jsse-nio-443"]
+18:35:11.006 [restartedMain] INFO  o.a.c.c.StandardService - [log,173] - Stopping service [Tomcat]
+18:35:11.021 [restartedMain] INFO  o.a.c.u.LifecycleBase - [log,173] - The stop() method was called on component [StandardServer[-1]] after stop() had already been called. The second call will be ignored.
+18:35:11.022 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Stopping ProtocolHandler ["https-jsse-nio-443"]
+18:35:11.022 [restartedMain] INFO  o.a.c.h.Http11NioProtocol - [log,173] - Destroying ProtocolHandler ["https-jsse-nio-443"]
+18:35:11.038 [restartedMain] INFO  sys-user - [shutdownAsyncManager,56] - ====关闭后台任务任务线程池====
+18:35:11.040 [restartedMain] INFO  o.q.c.QuartzScheduler - [shutdown,666] - Scheduler CsitScheduler_$_MacBook-Proharry.local1592908505491 shutting down.
+18:35:11.041 [restartedMain] INFO  o.q.c.QuartzScheduler - [standby,585] - Scheduler CsitScheduler_$_MacBook-Proharry.local1592908505491 paused.
+18:35:11.042 [restartedMain] INFO  o.q.c.QuartzScheduler - [shutdown,740] - Scheduler CsitScheduler_$_MacBook-Proharry.local1592908505491 shutdown complete.
+18:35:11.058 [restartedMain] INFO  c.a.d.p.DruidDataSource - [close,1928] - {dataSource-1} closed

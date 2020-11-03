@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.quartz.mapper.GroupDataMapper">
+
+ 	
+ 	<insert id="InsertData_month"  >
+		insert into yx_device_month ( DeviceID,GatewayID,high,SeatStatus,CreateTime,Duration,StartTime,useStatus)
+		select  a.DeviceID,a.GatewayID,a.high,a.SeatStatus, DATE_FORMAT(NOW(), '%Y-%m-%d') CreateTime ,sum(a.Duration)as dur,count(a.Duration)as StartTime,useStatus
+		from (
+		select  ifnull(Duration,0) Duration,ifnull(StartTime,0) StartTime ,'9' SeatStatus ,ifnull(GatewayID,'0') GatewayID
+		,a.device_code DeviceID,ifnull(high,'0') high,1 useStatus
+		from yx_device as a left join (
+		select  max(Duration) Duration , StartTime, '9' SeatStatus,GatewayID,DeviceID,high
+		from yx_device_day where Duration &gt;=60 and SeatStatus=1
+		and (CreateTime BETWEEN CONCAT(curdate(),' 9:00') and CONCAT(curdate(),' 12:00')
+		or CreateTime BETWEEN CONCAT(curdate(),' 13:00') and CONCAT(curdate(),' 18:00') )
+		group by  StartTime, SeatStatus,GatewayID,DeviceID,high
+		) Dev_day on a.device_code=Dev_day.DeviceID where a.device_type=2
+		union
+		select  ifnull(Duration,0) Duration,ifnull(StartTime,0) StartTime ,0 SeatStatus ,ifnull(GatewayID,'0') GatewayID ,a.device_code DeviceID
+		,ifnull(high,'0') high,0 useStatus
+		from yx_device as a left join (
+		select  max(Duration) Duration , StartTime, SeatStatus,GatewayID,DeviceID,high
+		from yx_device_day where  SeatStatus=0
+		and (CreateTime BETWEEN CONCAT(curdate(),' 9:00') and CONCAT(curdate(),' 12:00')
+		or CreateTime BETWEEN CONCAT(curdate(),' 13:00') and CONCAT(curdate(),' 18:00') )
+		group by  StartTime, SeatStatus,GatewayID,DeviceID,high
+		) Dev_day on a.device_code=Dev_day.DeviceID where a.device_type=2
+		union
+		select  ifnull(Duration,0) Duration,ifnull(StartTime,0) StartTime ,1 SeatStatus ,ifnull(GatewayID,'0') GatewayID ,a.device_code DeviceID
+		,ifnull(high,'0') high,1 useStatus
+		from yx_device as a left join (
+		select  max(Duration) Duration , StartTime, SeatStatus,GatewayID,DeviceID,high
+		from yx_device_day where (Duration &lt;60 and SeatStatus=1)
+		and (CreateTime BETWEEN CONCAT(curdate(),' 9:00') and CONCAT(curdate(),' 12:00')
+		or CreateTime BETWEEN CONCAT(curdate(),' 13:00') and CONCAT(curdate(),' 18:00') )
+		group by  StartTime, SeatStatus,GatewayID,DeviceID,high
+		) Dev_day on a.device_code=Dev_day.DeviceID where a.device_type=2
+		union
+		select  ifnull(Duration,0) Duration,ifnull(StartTime,0) StartTime ,2 SeatStatus ,ifnull(GatewayID,'0') GatewayID ,a.device_code DeviceID
+		,ifnull(high,'0') high,1 useStatus
+		from yx_device as a left join (
+		select  max(Duration) Duration , StartTime, SeatStatus,GatewayID,DeviceID,high
+		from yx_device_day where  SeatStatus=2
+		and (CreateTime BETWEEN CONCAT(curdate(),' 9:00') and CONCAT(curdate(),' 12:00')
+		or CreateTime BETWEEN CONCAT(curdate(),' 13:00') and CONCAT(curdate(),' 18:00') )
+		group by  StartTime, SeatStatus,GatewayID,DeviceID,high
+		) Dev_day on a.device_code=Dev_day.DeviceID where a.device_type=2
+		) a GROUP BY a.SeatStatus,a.DeviceID
+
+	</insert>
+
+	<insert id="InsertData_year"  >
+	insert into yx_device_year ( DeviceID,GatewayID,SeatStatus,CreateTime,Duration,StartTime, useStatus )
+	select  DeviceID,GatewayID,SeatStatus,date_format(CreateTime, '%Y-%m') CreateTime ,sum(Duration) Duration ,
+	sum(Duration) StartTime,
+	case useStatus when 0 then 0
+	else 1 end  useStatus
+	from (
+	select  sum(Duration) Duration , StartTime,  SeatStatus,GatewayID,DeviceID,CreateTime,useStatus
+	from yx_device_month where  CreateTime &gt;=DATE_ADD(curdate(),interval -day(curdate())+1 day)
+	group by  SeatStatus,GatewayID,DeviceID,CreateTime,useStatus
+	) a GROUP BY SeatStatus,DeviceID ;
+
+	</insert>
+
+	<delete id="delete_device_month">
+ 	delete from  yx_device_month where CreateTime=curdate();
+ 	</delete>
+
+	<delete id="delete_device_year">
+ 	delete from  yx_device_year where CreateTime=date_format(DATE_ADD(curdate(),interval -day(curdate())+1 day), '%Y-%m');
+ 	</delete>
+
+	<insert id="InsertData_month_wechart"  >
+		insert into yx_wechart_device_month ( openid,DeviceID,high,SeatStatus,CreateTime,Duration,StartTime)
+		select a.openid,b.DeviceID,b.high,b.SeatStatus,b.CreateTime,b.dur,b.StartTime from
+		(
+		select de.device_id ,qr.openid from yx_device_config de,yx_qrcode_config qr where de.qrcode=qr.qrcode
+		)
+		a,(
+		select  a.DeviceID,a.GatewayID,a.high,a.SeatStatus, DATE_FORMAT(NOW(), '%Y-%m-%d') CreateTime ,sum(a.Duration)as dur,count(a.Duration)as StartTime
+		from (
+		select  ifnull(Duration,0) Duration,ifnull(StartTime,0) StartTime ,'9' SeatStatus ,ifnull(GatewayID,'0') GatewayID
+		,a.device_code DeviceID,ifnull(high,'0') high
+		from yx_device as a left join (
+		select  max(Duration) Duration , StartTime, '9' SeatStatus,GatewayID,DeviceID,high
+		from yx_device_day where Duration &gt;=60 and SeatStatus=1
+		and  CreateTime>=curdate()
+		group by  StartTime, SeatStatus,GatewayID,DeviceID,high
+		) Dev_day on a.device_code=Dev_day.DeviceID where a.device_type=2
+		union
+		select  ifnull(Duration,0) Duration,ifnull(StartTime,0) StartTime ,0 SeatStatus ,ifnull(GatewayID,'0') GatewayID ,a.device_code DeviceID
+		,ifnull(high,'0') high
+		from yx_device as a left join (
+		select  max(Duration) Duration , StartTime, SeatStatus,GatewayID,DeviceID,high
+		from yx_device_day where  SeatStatus=0
+		group by  StartTime, SeatStatus,GatewayID,DeviceID,high
+		) Dev_day on a.device_code=Dev_day.DeviceID where a.device_type=2
+		union
+		select  ifnull(Duration,0) Duration,ifnull(StartTime,0) StartTime ,1 SeatStatus ,ifnull(GatewayID,'0') GatewayID ,a.device_code DeviceID
+		,ifnull(high,'0') high
+		from yx_device as a left join (
+		select  max(Duration) Duration , StartTime, SeatStatus,GatewayID,DeviceID,high
+		from yx_device_day where (Duration &lt;60 and SeatStatus=1) and CreateTime>=curdate()
+		group by  StartTime, SeatStatus,GatewayID,DeviceID,high
+		) Dev_day on a.device_code=Dev_day.DeviceID where a.device_type=2
+		union
+		select  ifnull(Duration,0) Duration,ifnull(StartTime,0) StartTime ,2 SeatStatus ,ifnull(GatewayID,'0') GatewayID ,a.device_code DeviceID
+		,ifnull(high,'0') high
+		from yx_device as a left join (
+		select  max(Duration) Duration , StartTime, SeatStatus,GatewayID,DeviceID,high
+		from yx_device_day where  SeatStatus=2  and CreateTime>=curdate()
+		group by  StartTime, SeatStatus,GatewayID,DeviceID,high
+		) Dev_day on a.device_code=Dev_day.DeviceID where a.device_type=2
+		) a GROUP BY a.SeatStatus,a.DeviceID
+		) b
+		where a.device_id=b.DeviceID
+	</insert>
+
+	<insert id="InsertData_Year_wechart"  >
+		insert into yx_wechart_device_year( openid,DeviceID,SeatStatus,CreateTime,Duration,StartTime)
+		select openid, DeviceID,SeatStatus,date_format(CreateTime, '%Y-%m') CreateTime ,sum(Duration) Duration ,
+		sum(Duration) StartTime
+		from (
+		select  sum(Duration) Duration , StartTime,  SeatStatus,DeviceID,CreateTime ,openid
+		from yx_wechart_device_month where  CreateTime &gt;=DATE_ADD(curdate(),interval -day(curdate())+1 day)
+		group by  SeatStatus,DeviceID,CreateTime ,openid
+		) a GROUP BY SeatStatus,DeviceID ;
+	</insert>
+
+
+	<delete id="delete_wechart_device_month">
+ 	delete from  yx_wechart_device_month where CreateTime=curdate();
+ 	</delete>
+
+	<delete id="delete_wechart_device_year">
+ 	delete from  yx_wechart_device_year where CreateTime=date_format(DATE_ADD(curdate(),interval -day(curdate())+1 day), '%Y-%m');
+ 	</delete>
+
+
+	<!--学校趋势图插入 -->
+
+	<!--<insert id="insertmonthdetails" parameterType="int">
+        INSERT into student_month_details
+        (student_code,student_name,user_id,student_city,student_area,student_school,student_grade,student_class,lefteyeVision,righteyeVision,checkdate,timeofday)
+                select  a.student_code,a.student_name,a.user_id,a.student_city,a.student_area,a.student_school,student_grade,student_class,
+                (select lefteyeVision from student_details
+            where student_code = a.student_code order by checkdate desc limit 1)lefteyeVision,
+        (select righteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)righteyeVision,
+        (now())checkdate,(select timeofday from student_details where student_code = a.student_code order by checkdate desc limit 1)timeofday from student a
+    </insert>-->
+
+
+	<!--班级趋势图定时器插入-->
+	<!--
+	<insert id="monthdetails" parameterType="int">
+        INSERT into student_month_class_details (student_city,student_area,student_school,student_grade,student_class,month,number)
+        select a.student_city,a.student_area,a.student_school,student_grade,student_class,DATE_FORMAT(now(),'%m')month,(select count(*)number from(
+        select  student_class,student_code,(select lefteyeVision from student_details
+        where student_code = a.student_code order by checkdate desc limit 1)lefteyeVision,
+        (select righteyeVision from student_details where student_code = a.student_code order by 	checkdate desc limit 1)righteyeVision,
+        (select checkdate from student_details where student_code = a.student_code order by 	checkdate desc limit 1)checkdate from student a where  student_class=201 )aa
+        where (lefteyeVision &lt; (select vision_standard from student_compared limit 1) or righteyeVision &lt;  (select vision_standard from student_compared limit 1)) GROUP BY student_class)number
+        from student a where student_class=201 GROUP BY student_class
+    </insert>
+-->
+
+
+</mapper> 

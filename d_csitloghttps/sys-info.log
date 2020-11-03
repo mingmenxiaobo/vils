@@ -1,0 +1,8 @@
+09:26:31.724 [schedule-pool-5] INFO  c.c.f.s.w.s.OnlineWebSessionManager - [validateSessions,100] - invalidation sessions...
+09:52:07.976 [Thread-49] INFO  o.q.c.QuartzScheduler - [standby,585] - Scheduler CsitScheduler_$_MacBook-Proharry.local1593311626735 paused.
+09:52:07.994 [Thread-49] INFO  o.q.c.QuartzScheduler - [shutdown,666] - Scheduler CsitScheduler_$_MacBook-Proharry.local1593311626735 shutting down.
+09:52:07.995 [Thread-49] INFO  o.q.c.QuartzScheduler - [standby,585] - Scheduler CsitScheduler_$_MacBook-Proharry.local1593311626735 paused.
+09:52:07.997 [Thread-49] INFO  o.q.c.QuartzScheduler - [shutdown,740] - Scheduler CsitScheduler_$_MacBook-Proharry.local1593311626735 shutdown complete.
+09:52:08.001 [Thread-49] INFO  sys-user - [shutdownSpringSessionValidationScheduler,39] - ====关闭会话验证任务====
+09:52:08.038 [Thread-49] INFO  sys-user - [shutdownAsyncManager,56] - ====关闭后台任务任务线程池====
+09:52:08.059 [Thread-49] INFO  c.a.d.p.DruidDataSource - [close,1928] - {dataSource-1} closed

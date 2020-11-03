@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxWechartInfoMapper">
+    <resultMap type="YxWechartInfo" id="YxWechartInfoResult">
+        <result property="id"    column="ID"    />
+        <result property="openid"    column="openID"    />
+        <result property="nickname"    column="nickName"    />
+        <result property="avatarurl"    column="avatarUrl"    />
+        <result property="updatetime"    column="updateTime"    />
+    </resultMap>
+
+    <sql id="selectYxWechartInfoVo">
+        select ID, openID, nickName, avatarUrl, updateTime from yx_wechart_info
+    </sql>
+
+    <select id="selectYxWechartInfoList" parameterType="YxWechartInfo" resultMap="YxWechartInfoResult">
+        <include refid="selectYxWechartInfoVo"/>
+        <where>  
+        </where>
+    </select>
+    
+    <select id="selectYxWechartInfoById" parameterType="String" resultMap="YxWechartInfoResult">
+        <include refid="selectYxWechartInfoVo"/>
+        where openid = #{openid}
+    </select>
+        
+    <insert id="insertYxWechartInfo" parameterType="YxWechartInfo" useGeneratedKeys="true" keyProperty="id">
+        replace into yx_wechart_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openid != null  and openid != ''">openID,</if>
+            <if test="nickname != null  and nickname != ''">nickName,</if>
+            <if test="avatarurl != null  and avatarurl != ''">avatarUrl,</if>
+            <if test="updatetime != null ">updateTime,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openid != null  and openid != ''">#{openid},</if>
+            <if test="nickname != null  and nickname != ''">#{nickname},</if>
+            <if test="avatarurl != null  and avatarurl != ''">#{avatarurl},</if>
+            <if test="updatetime != null ">#{updatetime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateYxWechartInfo" parameterType="YxWechartInfo">
+        update yx_wechart_info
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="openid != null  and openid != ''">openID = #{openid},</if>
+            <if test="nickname != null  and nickname != ''">nickName = #{nickname},</if>
+            <if test="avatarurl != null  and avatarurl != ''">avatarUrl = #{avatarurl},</if>
+            <if test="updatetime != null ">updateTime = #{updatetime},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteYxWechartInfoById" parameterType="Long">
+        delete from yx_wechart_info where ID = #{id}
+    </delete>
+
+    <delete id="deleteYxWechartInfoByIds" parameterType="String">
+        delete from yx_wechart_info where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

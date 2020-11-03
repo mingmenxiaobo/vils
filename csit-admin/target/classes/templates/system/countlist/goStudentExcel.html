@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html style="height: 100%" lang="zh" xmlns:th="http://www.thymeleaf.org">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <input name="studentCode" id="studentCode" type="hidden" th:value="${studentCode}"/>
+       <input name="studentName" id="studentName" type="hidden" th:value="${studentName}"/>
+       <script th:src="@{/js/jquery.min.js}"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+       <script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+       <script type="text/javascript">
+            var dom = document.getElementById("container");
+            var myChart = echarts.init(dom);
+            var studentcode=document.getElementById("studentCode").value;
+            var studentName=document.getElementById("studentName").value;
+            var leftArr = [];
+            var rightArr = [];
+            var month = [];
+            $.ajax({
+                url: ctx+'system/countlist/getStudentVisionByStudentCode',
+                dataType: 'json',
+                data: {'StudentCode': studentcode},
+                type: 'post',
+                async: false,
+                success: function (res) {
+                    if (res[0].Code == 200) {
+                        for(var k=0;k<res[0].data.length;k++){
+                            leftArr.push(res[0].data[k].lefteyeVision);
+                            rightArr.push(res[0].data[k].righteyeVision)
+                            month.push(res[0].data[k].month)
+                        }
+                    }
+                },
+                error: function (error) {
+
+                }
+            });
+            var app = {};
+            option = null;
+            option = {
+                title: {
+                    text: studentName+'视力情况',
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['左眼视力', '右眼视力']
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        dataView: {readOnly: false},
+                        magicType: {type: ['line', 'bar']},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: month
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                series: [
+                    {
+                        name: '左眼视力',
+                        type: 'line',
+                        data: leftArr
+                    },
+                    {
+                        name: '右眼视力',
+                        type: 'line',
+                        data: rightArr
+                    }
+                ]
+            };
+            ;
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+       </script>
+   </body>
+</html>

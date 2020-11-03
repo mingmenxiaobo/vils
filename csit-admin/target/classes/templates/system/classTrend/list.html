@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('UserList')" />
+	<th:block th:include="include :: layout-latest-css" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+	<div class="ui-layout-center">
+		<div class="container-div">
+			<div class="row">
+				<div class="col-sm-12 search-collapse">
+					<form id="classTrend-form">
+						<div class="select-list">
+							<ul>
+								<li>
+									<p >[[#{device.title.deptid}]]：</p>
+									<div class="col-sm-3" style="padding: 0px">
+										<div class="input-group">
+											<input id="userId" name="userId" type="hidden"  />
+											<input style="width: 150px" name="treedeptName" onclick="selectDeptTree()" id="treedeptName" type="text" th:placeholder="#{user.title.dept}" class="form-control" required>
+										</div>
+									</div>
+								</li>
+
+								<li>
+									<a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;[[#{public.button.query}]]</a>
+								    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;[[#{public.button.refresh}]]</a>
+								</li>
+							</ul>
+						</div>
+					</form>
+				</div>
+				
+		        <div class="btn-group-sm" id="toolbar" role="group">
+					<a class="btn btn-info" onclick="goExcel()" shiro:hasPermission="system:classTrend:list">
+						<i class="fa fa-upload"></i>班级视力趋势图
+					</a>
+					<a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:classTrend:export">
+						<i class="fa fa-download"></i> [[#{public.button.export}]]
+					</a>
+		        </div>
+		        
+		        <div class="col-sm-12 select-table table-striped">
+				    <table id="bootstrap-table"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: layout-latest-js" />
+	<th:block th:include="include :: ztree-js" />
+	<script th:inline="javascript">
+		var prefix = ctx + "system/classTrend";
+		var num;
+		var userId
+
+		$(function() {
+		    var panehHidden = false;
+		    if ($(this).width() < 769) {
+		        panehHidden = true;
+		    }
+		    $('body').layout({ initClosed: panehHidden, west__size: 185 });
+		    queryUserList();
+		    queryDeptTree();
+
+		});
+
+
+		function queryUserList() {
+		    var options = {
+		        url: prefix + "/lists",
+				exportUrl: prefix + "/export",
+		        modalName: "class",
+				columns: [
+					{
+						field: 'studentSchool',
+						align: 'center',
+						title: '学校'
+					},
+					{
+						field: 'studentGrade',
+						align: 'center',
+						title: '年级'
+					},
+					{
+						field: 'studentClass',
+						align: 'center',
+						title: '班级'
+					},
+					{
+						field: 'month',
+						align: 'center',
+						title: '月份'
+					},
+					{
+						field: 'number',
+						align: 'center',
+						title: '视力异常人数（任意眼视力都低于视力标准值）'
+					}]
+		    };
+		    $.table.init(options);
+		}
+
+		function goExcel() {
+			userId=document.getElementById("userId").value;
+			if(userId == ""){
+				url = prefix + "/details/0";
+			}else{
+				var url = prefix + "/details/"+userId;
+			}
+			$.modal.openTab("班级趋势图", url);
+		}
+
+
+		function queryDeptTree()
+		{
+			var url = ctx + "system/dept/treeData";
+			var options = {
+		        url: url,
+		        expandLevel: 2,
+		        onClick : zOnClick
+		    };
+			$.tree.init(options);
+			
+			function zOnClick(event, treeId, treeNode) {
+				$("#deptId").val(treeNode.id);
+
+				$("#parentId").val(treeNode.pId);
+
+				$.table.search();
+			}
+		}
+		
+		$('#btnExpand').click(function() {
+			$._tree.expandAll(true);
+		    $(this).hide();
+		    $('#btnCollapse').show();
+		});
+		
+		$('#btnCollapse').click(function() {
+			$._tree.expandAll(false);
+		    $(this).hide();
+		    $('#btnExpand').show();
+		});
+		
+		$('#btnRefresh').click(function() {
+			queryDeptTree();
+		});
+
+
+		/*用户管理-新增-选择部门树*/
+		function selectDeptTree() {
+			var treeId = $("#treeDeptId").val();
+			var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeDeptId").val();
+			var url = ctx + "system/dept/selectDeptTree/" + deptId;
+			var options = {
+				title: [[#{device.title.selectmenu}]],
+				width: "380",
+				url: url,
+				callBack: doSubmitDept
+			};
+			$.modal.openOptions(options);
+		}
+
+		function doSubmitDept(index, layero){
+			var body = layer.getChildFrame('body', index);
+			$("#userId").val(body.find('#treeId').val());
+			$("#treedeptName").val(body.find('#treeName').val());
+			layer.close(index);
+		}
+
+	</script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+<form enctype="multipart/form-data" class="mt20 mb10">
+	<div class="col-xs-offset-1">
+		<input type="file" id="file" name="file"/>
+		<div class="mt10 pt5">
+			<input type="checkbox" id="updateSupport" name="updateSupport" th:title="#{user.title.updateprompt}">是否更新已经存在的数据
+			 &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i>下载</a>
+		</div>
+		<font color="red" class="pull-left mt10">
+			[[#{user.title.prompt}]]
+		</font>
+	</div>
+</form>
+</script>
+</html>

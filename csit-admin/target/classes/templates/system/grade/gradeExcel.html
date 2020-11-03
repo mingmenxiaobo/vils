@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html style="height: 100%" lang="zh" xmlns:th="http://www.thymeleaf.org">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <input name="userId" id="userId" type="hidden" th:value="${userId}"/>
+       <script th:src="@{/js/jquery.min.js}"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+       <script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+       <script type="text/javascript">
+            var dom = document.getElementById("container");
+            var myChart = echarts.init(dom);
+            var userId=document.getElementById("userId").value;
+            var normal = [];
+            var Abnormal = [];
+            var school = [];
+            $.ajax({
+                url: ctx+'system/grade/getGradeVision',
+                dataType: 'json',
+                data:{"userId":userId},
+                type: 'post',
+                async: false,
+                success: function (res) {
+                    if (res[0].Code == 200) {
+                        for(var k=0;k<res[0].data.length;k++){
+                            normal.push(res[0].data[k].countaa);
+                            Abnormal.push(res[0].data[k].countbb)
+                            school.push(res[0].data[k].grade);
+                        }
+                    }
+                },
+                error: function (error) {
+
+                }
+            });
+            var app = {};
+            option = null;
+
+
+            var seriesLabel = {
+                normal: {
+                    show: true,
+                    textBorderColor: '#333',
+                    textBorderWidth: 2
+                }
+            }
+
+            option = {
+                title: {
+                    text: '电子设备使用情况调研表'
+                },
+                tooltip: {
+                    trigger: 'axis',
+                    axisPointer: {
+                        type: 'shadow'
+                    }
+                },
+                legend: {
+                    data: ['视力正常人数（双眼视力都高于视力标准值）', '每天使用电子设备超过4小时人数']
+                },
+                grid: {
+                    left: 100
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'value',
+                    name: '人数',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                yAxis: {
+                    type: 'category',
+                    inverse: true,
+                    data: school,
+                    axisLabel: {
+                        formatter: function (value) {
+                            return  value ;
+                        },
+                        margin: 10,
+                        rich: {
+                            value: {
+                                lineHeight: 30,
+                                align: 'center'
+                            }
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '视力正常人数（双眼视力都高于视力标准值）',
+                        type: 'bar',
+                        data: normal,
+                        label: seriesLabel,
+                        markPoint: {
+                            symbolSize: 1,
+                            symbolOffset: [0, '50%'],
+                            label: {
+                                formatter: '{a|{a}\n}{b|{b} }{c|{c}}',
+                                backgroundColor: 'rgb(242,242,242)',
+                                borderColor: '#aaa',
+                                borderWidth: 1,
+                                borderRadius: 4,
+                                padding: [4, 10],
+                                lineHeight: 26,
+                                // shadowBlur: 5,
+                                // shadowColor: '#000',
+                                // shadowOffsetX: 0,
+                                // shadowOffsetY: 1,
+                                position: 'right',
+                                distance: 20,
+                                rich: {
+                                    a: {
+                                        align: 'center',
+                                        color: '#fff',
+                                        fontSize: 18,
+                                        textShadowBlur: 2,
+                                        textShadowColor: '#000',
+                                        textShadowOffsetX: 0,
+                                        textShadowOffsetY: 1,
+                                        textBorderColor: '#333',
+                                        textBorderWidth: 2
+                                    },
+                                    b: {
+                                        color: '#333'
+                                    },
+                                    c: {
+                                        color: '#ff8811',
+                                        textBorderColor: '#000',
+                                        textBorderWidth: 1,
+                                        fontSize: 22
+                                    }
+                                }
+                            }
+                        }
+                    },
+                    {
+                        name: '每天使用电子设备超过4小时人数',
+                        type: 'bar',
+                        label: seriesLabel,
+                        data: Abnormal
+                    }
+                ]
+            };
+            ;
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+       </script>
+   </body>
+</html>

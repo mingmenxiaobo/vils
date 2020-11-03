@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html style="height: 100%" lang="zh" xmlns:th="http://www.thymeleaf.org">
+   <head>
+       <meta charset="utf-8">
+   </head>
+   <body style="height: 100%; margin: 0">
+       <div id="container" style="height: 100%"></div>
+       <script th:src="@{/js/jquery.min.js}"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/echarts.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-gl/dist/echarts-gl.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts-stat/dist/ecStat.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/dataTool.min.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/china.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/map/js/world.js"></script>
+       <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/echarts/dist/extension/bmap.min.js"></script>
+       <script th:inline="javascript"> var ctx = [[@{/}]]; var captchaType = [[${captchaType}]]; </script>
+       <script type="text/javascript">
+
+
+          var totalArr = [];
+          var schoolNameInfoArr = [];
+          $.ajax({
+               url: ctx+'system/trend/getSchoolName',
+               dataType: 'json',
+               type: 'get',
+               async: false,
+               success: function (res) {
+                   if (res[0].Code == 200) {
+                       $.each(res[0].data,function (key,value) {
+                           schoolNameInfoArr.push(value["deptName"]);
+                       });
+                       console.log("schoolNameInfoArr："+ schoolNameInfoArr);
+                       $.each(res[0].data,function (key,value) {
+                           //根据学校ID查询该学校数据
+                           var arr = [];
+                           $.ajax({
+                               url: ctx+'system/trend/selectSchoolVisionTrendBystudentSchool',
+                               dataType: 'json',
+                               data:{"studentSchool":value["studentSchool"]},
+                               type: 'get',
+                               async: false,
+                               success: function (res) {
+                                   if (res[0].Code == 200) {
+                                       $.each(res[0].data,function (key,value) {
+                                           arr.push(value["number"]);
+                                       });
+                                   }
+                               }
+                           });
+                           var obj={"name":value["deptName"], "type": "line","data":arr};
+                           totalArr.push(obj);
+                       })
+                   }
+               },
+               error: function (error) {
+
+               }
+           });
+          console.log("schoolNameInfoArr:"+schoolNameInfoArr);
+          console.log("totalArr:"+totalArr);
+            var dom = document.getElementById("container");
+            var myChart = echarts.init(dom);
+            var app = {};
+            option = null;
+            option = {
+                title: {
+                    text: '各学校视力趋势'
+                },
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: schoolNameInfoArr
+                },
+                toolbox: {
+                    show: true,
+                    feature: {
+                        dataZoom: {
+                            yAxisIndex: 'none'
+                        },
+                        dataView: {readOnly: false},
+                        magicType: {type: ['line', 'bar']},
+                        restore: {},
+                        saveAsImage: {}
+                    }
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLabel: {
+                        formatter: '{value}'
+                    }
+                },
+                series: totalArr
+            };
+            if (option && typeof option === "object") {
+                myChart.setOption(option, true);
+            }
+       </script>
+   </body>
+</html>

@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxDeviceMapper">
+    <resultMap type="YxDevice" id="YxDeviceResult">
+        <result property="deviceId"    column="device_id"    />
+        <result property="deviceType"    column="device_type"    />
+        <result property="parentId"    column="parent_id"    />
+        <result property="ancestors"    column="ancestors"    />
+        <result property="deptId"    column="dept_id"    />
+        <result property="deviceName"    column="device_name"    />
+        <result property="deviceSite"    column="device_site"    />
+        <result property="deviceCode"    column="device_code"    />
+        <result property="deviceMsisdn"    column="device_msisdn"    />
+        <result property="orderNum"    column="order_num"    />
+        <result property="leader"    column="leader"    />
+        <result property="phone"    column="phone"    />
+        <result property="email"    column="email"    />
+        <result property="status"    column="status"    />
+        <result property="delFlag"    column="del_flag"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="parentName" column="parent_name" />
+        <association property="dept"    column="dept_id" javaType="SysDept" resultMap="deptResult" />
+    </resultMap>
+
+    <resultMap id="deptResult" type="SysDept">
+        <id     property="deptId"   column="dept_id"     />
+        <result property="parentId" column="parent_id"   />
+        <result property="deptName" column="dept_name"   />
+    </resultMap>
+
+
+    <resultMap type="YxDeviceCode" id="devCodeList">
+        <result property="deviceCode"    column="device_code"    />
+    </resultMap>
+
+
+    <sql id="selectYxDeviceVo">
+        select a.device_id, a.device_type,a.parent_id, a.ancestors, a.dept_id, d.dept_name,a.device_name,
+        a.device_site, a.device_code, a.device_msisdn, a.order_num, a.leader, a.phone, a.email, a.status, a.del_flag,
+        a.create_by, a.create_time, a.update_by, a.update_time from yx_device a left join sys_dept d
+        on a.dept_id =d.dept_id
+
+    </sql>
+
+    <select id="selectYxDeviceList" parameterType="YxDevice" resultMap="YxDeviceResult">
+        <include refid="selectYxDeviceVo"/>
+        <where>
+            <if test="deptId != null "> and (a.dept_id = #{deptId} or a.dept_id in
+                (SELECT t.dept_id FROM sys_dept t  WHERE FIND_IN_SET(#{deptId}, t.ancestors)))</if>
+            <if test="deviceName != null  and deviceName != ''"> and device_name like concat('%', #{deviceName}, '%')</if>
+            <if test="deviceSite != null  and deviceSite != ''"> and device_site like concat('%', #{deviceSite}, '%')</if>
+            <if test="deviceMsisdn != null  and deviceMsisdn != ''"> and device_msisdn = #{deviceMsisdn}</if>
+            <if test="leader != null  and leader != ''"> and leader = #{leader}</if>
+            <if test="status != null  and status != ''"> and a.status = #{status}</if>
+        </where>
+        order by a.parent_id
+    </select>
+    
+    <select id="selectYxDeviceById" parameterType="Long" resultMap="YxDeviceResult">
+        select t.device_id, t.device_type,t.parent_id, t.ancestors, t.dept_id,(select dept_name from sys_dept d
+        where d.dept_id =t.dept_id )dept_name, t.device_name, t.device_site, t.device_code, t.device_msisdn, t.order_num, t.leader, t.phone, t.email, t.status, t.del_flag, t.create_by, t.create_time, t.update_by, t.update_time, p.device_name as parent_name
+        from yx_device t
+        left join yx_device p on p.device_id = t.parent_id
+        where t.device_id = #{deviceId}
+    </select>
+
+    <select id="selectDeviceByCode" parameterType="YxDevice" resultMap="YxDeviceResult">
+      	select * from yx_device where device_code=#{deviceCode}
+    </select>
+
+    <select id="selectYxDeviceByCode" parameterType="YxDevice" resultMap="devCodeList">
+      	select a.device_id,p.device_code from
+		 (select device_id from yx_device t where t.device_code=#{deviceCode}) a,
+		  yx_device p where p.parent_id=a.device_id
+    </select>
+        
+    <insert id="insertYxDevice" parameterType="YxDevice" useGeneratedKeys="true" keyProperty="deviceId">
+        insert into yx_device
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="deviceType != null ">device_type,</if>
+            <if test="parentId != null ">parent_id,</if>
+            <if test="ancestors != null  and ancestors != ''">ancestors,</if>
+            <if test="deptId != null ">dept_id,</if>
+            <if test="deviceName != null  and deviceName != ''">device_name,</if>
+            <if test="deviceSite != null  and deviceSite != ''">device_site,</if>
+            <if test="deviceCode != null  and deviceCode != ''">device_code,</if>
+            <if test="deviceMsisdn != null  and deviceMsisdn != ''">device_msisdn,</if>
+            <if test="orderNum != null ">order_num,</if>
+            <if test="leader != null  and leader != ''">leader,</if>
+            <if test="phone != null  and phone != ''">phone,</if>
+            <if test="email != null  and email != ''">email,</if>
+            <if test="status != null  and status != ''">status,</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="deviceType != null ">#{deviceType},</if>
+            <if test="parentId != null ">#{parentId},</if>
+            <if test="ancestors != null  and ancestors != ''">#{ancestors},</if>
+            <if test="deptId != null ">#{deptId},</if>
+            <if test="deviceName != null  and deviceName != ''">#{deviceName},</if>
+            <if test="deviceSite != null  and deviceSite != ''">#{deviceSite},</if>
+            <if test="deviceCode != null  and deviceCode != ''">#{deviceCode},</if>
+            <if test="deviceMsisdn != null  and deviceMsisdn != ''">#{deviceMsisdn},</if>
+            <if test="orderNum != null ">#{orderNum},</if>
+            <if test="leader != null  and leader != ''">#{leader},</if>
+            <if test="phone != null  and phone != ''">#{phone},</if>
+            <if test="email != null  and email != ''">#{email},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+            <if test="delFlag != null  and delFlag != ''">#{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">#{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">#{updateTime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateYxDevice" parameterType="YxDevice">
+        update yx_device
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="deviceType != null ">device_type=#{deviceType},</if>
+            <if test="parentId != null ">parent_id = #{parentId},</if>
+            <if test="ancestors != null  and ancestors != ''">ancestors = #{ancestors},</if>
+            <if test="deptId != null ">dept_id = #{deptId},</if>
+            <if test="deviceName != null  and deviceName != ''">device_name = #{deviceName},</if>
+            <if test="deviceSite != null  and deviceSite != ''">device_site = #{deviceSite},</if>
+            <if test="deviceCode != null  and deviceCode != ''">device_code = #{deviceCode},</if>
+            <if test="deviceMsisdn != null  and deviceMsisdn != ''">device_msisdn = #{deviceMsisdn},</if>
+            <if test="orderNum != null ">order_num = #{orderNum},</if>
+            <if test="leader != null  and leader != ''">leader = #{leader},</if>
+            <if test="phone != null  and phone != ''">phone = #{phone},</if>
+            <if test="email != null  and email != ''">email = #{email},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+            <if test="delFlag != null  and delFlag != ''">del_flag = #{delFlag},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+        </trim>
+        where device_id = #{deviceId}
+    </update>
+
+    <delete id="deleteYxDeviceById" parameterType="Long">
+        delete from yx_device where device_id = #{deviceId}
+    </delete>
+
+    <delete id="deleteYxDeviceByIds" parameterType="String">
+        delete from yx_device where device_id in 
+        <foreach item="deviceId" collection="array" open="(" separator="," close=")">
+            #{deviceId}
+        </foreach>
+    </delete>
+    
+</mapper>

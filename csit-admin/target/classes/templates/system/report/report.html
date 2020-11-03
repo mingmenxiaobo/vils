@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+    <th:block th:include="include :: header('使用报表')" />
+</head>
+<body class="gray-bg">
+     <div class="container-div">
+        <div class="row">
+            <div class="col-sm-12 search-collapse">
+                <form id="formId">
+                    <div class="select-list">
+                        <ul>
+                            <li>
+                                <p >[[#{device.title.deptid}]]：</p>
+                                    <div class="col-sm-3" style="padding: 0px">
+                                        <div class="input-group">
+                                            <input id="deptId" name="deptId" type="hidden"  />
+                                            <input style="width: 150px" name="treedeptName" onclick="selectDeptTree()" id="treedeptName" type="text" th:placeholder="#{user.title.dept}" class="form-control" required>
+
+                                        </div>
+                                    </div>
+
+                            </li>
+                            <li>
+                                <p style="width: 100px">[[#{list.title.viewCode}]]：</p>
+                                <input type="text" name="viewcode" id="viewcode"/>
+                            </li>
+                            <li>
+                                <p style="width: 100px">[[#{list.title.manufacturer}]]：</p>
+                                <input type="text" name="manufacturer" id="manufacturer"/>
+                            </li>
+                            <li>
+                                <p style="width: 100px">[[#{list.title.customername}]]：</p>
+                                <input type="text" name="customerName" id="customerName"/>
+                            </li>
+                            <li>
+                                <p style="width: 100px">[[#{list.title.productname}]]：</p>
+                                <input type="text" name="productName" id="productName"/>
+                            </li>
+                            <li class="select-time">
+                                <label style="width: 90px;margin-right:15px;text-align: right">[[#{report.title.RepDate}]]:</label>
+                                <input type="text" class="time-input" id="beginRepDate" placeholder="" name="beginRepDate"/>
+                                <span>-</span>
+                                <input type="text" class="time-input" id="endRepDate"    placeholder="" name="endRepDate"/>
+                            </li>
+
+                            <li>
+                                <a class="btn btn-primary btn-rounded btn-sm" onclick="$.table.search()"><i class="fa fa-search"></i>&nbsp;[[#{public.button.query}]]</a>
+                                <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;[[#{public.button.refresh}]]</a>
+                            </li>
+                        </ul>
+                    </div>
+                </form>
+            </div>
+
+
+
+        <div class="btn-group-sm" id="toolbar" role="group">
+
+            <a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:report:export">
+            <i class="fa fa-download"></i> [[#{public.button.export}]]
+            </a>
+            <a class="btn btn-warning" onclick="exportDate()">
+                <i class="fa fa-download"></i> [[#{report.title.exportChart}]]
+            </a>
+            </div>
+            <div class="col-sm-12 select-table table-striped">
+            <table id="bootstrap-table"></table>
+            </div>
+            </div>
+            </div>
+<th:block th:include="include :: footer" />
+<script th:inline="javascript">
+        getCurrentMonthFirst();
+        getCurrentMonthLast();
+        var removeFlag = [[${@permission.hasPermi('system:report:remove')}]];
+        var prefix = ctx + "system/report";
+        var AssetCount;
+
+
+        // 导出数据
+        function exportDate(){
+            getAssetCount();
+            if(AssetCount==1){
+                $.modal.confirm("确定导出所有" + table.options.modalName + "吗？", function() {
+                    $.modal.loading("正在导出数据，请稍后...");
+                    $.post(prefix+"/getUsep",$("#formId").serializeArray(),function(result) {
+                        console.log("result:"+result);
+                        if (result.code == web_status.SUCCESS) {
+                            window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
+                        } else if (result.code == web_status.WARNING) {
+                            $.modal.alertWarning(result.msg)
+                        } else {
+                            $.modal.alertError(result.msg);
+                        }
+                        $.modal.closeLoading();
+                    });
+                });
+            }else{
+                var deptName=$("#treedeptName").val();
+                if(deptName != null && deptName != ''){
+                    $.modal.confirm("确定导出所有" + table.options.modalName + "吗？", function() {
+                        $.modal.loading("正在导出数据，请稍后...");
+                        $.post(prefix+"/getAvgUsep", $("#formId").serializeArray(), function(result) {
+                            if (result.code == web_status.SUCCESS) {
+                                window.location.href = ctx + "common/download?fileName=" + encodeURI(result.msg) + "&delete=" + true;
+                            } else if (result.code == web_status.WARNING) {
+                                $.modal.alertWarning(result.msg)
+                            } else {
+                                $.modal.alertError(result.msg);
+                            }
+                            $.modal.closeLoading();
+                        });
+                    });
+                }else{
+                    alert("产品不唯一，请选择部门，或者输入设备码查询！");
+                }
+            }
+
+        }
+
+        function getAssetCount(){
+            $.ajax({
+                     type:"post",
+                     url: prefix+"/getcountViewCode",
+                     data:{"deptId":$("#deptId").val().trim(),"viewcode":$("#viewcode").val().trim(),
+                     "manufacturer":$("#manufacturer").val().trim(),"customerName":$("#customerName").val().trim(),
+                     "productName":$("#productName").val().trim(),"beginRepDate":$("#beginRepDate").val().trim(),
+                     "endRepDate":$("#endRepDate").val().trim()},
+                     dataType:"json",
+                     success:function(data) {
+                         console.log(data);
+                         AssetCount=data.data;
+                     }
+            });
+        }
+
+        $(function() {
+            var options = {
+
+                url: prefix + "/list",
+                exportUrl: prefix + "/export",
+
+                modalName: "使用报告",
+                columns: [{
+                    checkbox: true
+                },
+
+                {
+                    field : 'viewcode',
+                    title : [[#{report.title.viewcode}]],
+                    align: 'left'
+                },
+                {
+                    field : 'manufacturer',
+                    title : [[#{report.title.manufacturer}]],
+                    align: 'left'
+                },
+                {
+                    field : 'customerName',
+                    title : [[#{report.title.customerName}]],
+                    align: 'left'
+                },
+                {
+                    field : 'productName',
+                    title : [[#{report.title.productName}]],
+                    align: 'left'
+                },
+                {
+                    field : 'repDate',
+                    title : [[#{report.title.RepDate}]],
+                    align: 'left'
+                },
+                {
+                    field : 'duration',
+                    title : [[#{report.title.duration}]],
+                    align: 'left'
+                },
+                {
+                    field : 'free',
+                    title : [[#{report.title.free}]],
+                    align: 'left'
+                },
+                {
+                    field : 'usep',
+                    title : [[#{report.title.usep}]],
+                    align: 'left'
+                },
+                {
+                    field : 'unusep',
+                    title : [[#{report.title.unusep}]],
+                    align: 'left'
+                }]
+            };
+            $.table.init(options);
+        });
+
+
+        /*用户管理-新增-选择部门树*/
+        function selectDeptTree() {
+            var treeId = $("#treeDeptId").val();
+            var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeDeptId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: [[#{device.title.selectmenu}]],
+                width: "380",
+                url: url,
+                callBack: doSubmitDept
+            };
+            $.modal.openOptions(options);
+        }
+
+
+        function doSubmitDept(index, layero){
+            var body = layer.getChildFrame('body', index);
+
+            $("#deptId").val(body.find('#treeId').val());
+            $("#treedeptName").val(body.find('#treeName').val());
+
+            layer.close(index);
+        }
+
+
+        function getCurrentMonthFirst() {
+            var date = new Date()
+            date.setDate(1)
+           $("#beginRepDate").val(format('yyyy-MM-dd', date));
+        }
+
+        function getCurrentMonthLast() {
+            var date = new Date();
+            var currentMonth = date.getMonth();
+            var nextMonth = ++currentMonth;
+            var nextMonthFirstDay = new Date(date.getFullYear(), nextMonth, 1);
+            var oneDay = 1000 * 60 * 60 * 24;
+            $("#endRepDate").val(format('yyyy-MM-dd', new Date(nextMonthFirstDay - oneDay)));
+
+        }
+
+        function format(fmt, date) {
+            var o = {
+                "M+": date.getMonth() + 1, //月份
+                "d+": date.getDate(), //日
+                "h+": date.getHours(), //小时
+                "m+": date.getMinutes(), //分
+                "s+": date.getSeconds(), //秒
+                "q+": Math.floor((date.getMonth() + 3) / 3), //季度
+                "S": date.getMilliseconds() //毫秒
+            };
+            if (/(y+)/.test(fmt))
+                fmt = fmt.replace(RegExp.$1, (date.getFullYear() + "").substr(4 - RegExp.$1.length));
+            for (var k in o)
+                if (new RegExp("(" + k + ")").test(fmt))
+                    fmt = fmt.replace(RegExp.$1, (RegExp.$1.length == 1) ? (o[k]) : (("00" + o[k]).substr(("" + o[k]).length)));
+            return fmt;
+        }
+
+    </script>
+</body>
+</html>

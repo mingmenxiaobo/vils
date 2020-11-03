@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxDeviceConfigMapper">
+    
+    <resultMap type="YxDeviceConfig" id="YxDeviceConfigResult">
+        <result property="deviceConfigId"    column="device_config_id"    />
+        <result property="qrcode"    column="qrcode"    />
+        <result property="deviceId"    column="device_id"    />
+        <result property="createBy"    column="create_by"    />
+        <result property="createTime"    column="create_time"    />
+        <result property="updateBy"    column="update_by"    />
+        <result property="updateTime"    column="update_time"    />
+        <result property="remark"    column="remark"    />
+    </resultMap>
+
+    <sql id="selectYxDeviceConfigVo">
+        select device_config_id, qrcode, device_id, create_by, create_time, update_by, update_time, remark from yx_device_config
+    </sql>
+
+    <select id="selectYxDeviceConfigList" parameterType="YxDeviceConfig" resultMap="YxDeviceConfigResult">
+        <include refid="selectYxDeviceConfigVo"/>
+        <where>  
+            <if test="qrcode != null  and qrcode != ''"> and qrcode = #{qrcode}</if>
+            <if test="deviceId != null  and deviceId != ''"> and device_id = #{deviceId}</if>
+        </where>
+    </select>
+    
+    <select id="selectYxDeviceConfigById" parameterType="Long" resultMap="YxDeviceConfigResult">
+        <include refid="selectYxDeviceConfigVo"/>
+        where device_config_id = #{deviceConfigId}
+    </select>
+        
+    <insert id="insertYxDeviceConfig" parameterType="YxDeviceConfig">
+        insert into yx_device_config
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="qrcode != null  and qrcode != ''">qrcode,</if>
+            <if test="deviceId != null  and deviceId != ''">device_id,</if>
+            <if test="createBy != null  and createBy != ''">create_by,</if>
+            <if test="createTime != null ">create_time,</if>
+            <if test="updateBy != null  and updateBy != ''">update_by,</if>
+            <if test="updateTime != null ">update_time,</if>
+            <if test="remark != null  and remark != ''">remark,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="qrcode != null  and qrcode != ''">#{qrcode},</if>
+            <if test="deviceId != null  and deviceId != ''">#{deviceId},</if>
+            <if test="createBy != null  and createBy != ''">#{createBy},</if>
+            <if test="createTime != null ">now(),</if>
+            <if test="updateBy != null  and updateBy != ''">#{updateBy},</if>
+            <if test="updateTime != null ">now(),</if>
+            <if test="remark != null  and remark != ''">#{remark},</if>
+         </trim>
+    </insert>
+
+    <update id="updateYxDeviceConfig" parameterType="YxDeviceConfig">
+        update yx_device_config
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qrcode != null  and qrcode != ''">qrcode = #{qrcode},</if>
+            <if test="deviceId != null  and deviceId != ''">device_id = #{deviceId},</if>
+            <if test="createBy != null  and createBy != ''">create_by = #{createBy},</if>
+            <if test="createTime != null ">create_time = #{createTime},</if>
+            <if test="updateBy != null  and updateBy != ''">update_by = #{updateBy},</if>
+            <if test="updateTime != null ">update_time = #{updateTime},</if>
+            <if test="remark != null  and remark != ''">remark = #{remark},</if>
+        </trim>
+        where device_config_id = #{deviceConfigId}
+    </update>
+
+    <delete id="deleteYxDeviceConfigById" parameterType="Long">
+        delete from yx_device_config where device_config_id = #{deviceConfigId}
+    </delete>
+
+    <delete id="deleteYxDeviceConfigByIds" parameterType="String">
+        delete from yx_device_config where device_config_id in 
+        <foreach item="deviceConfigId" collection="array" open="(" separator="," close=")">
+            #{deviceConfigId}
+        </foreach>
+    </delete>
+    <select id="selectDeviceConfigByOpenId" parameterType="String" resultMap="YxDeviceConfigResult">
+        <include refid="selectYxDeviceConfigVo"/>
+        where openid = #{openid}
+    </select>
+
+
+</mapper>

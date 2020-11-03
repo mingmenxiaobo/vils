@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改绑定设备')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-deviceLink-edit" th:object="${yxDeviceConfig}">
+            <input name="deviceConfigId" th:field="*{deviceConfigId}" type="hidden">
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">二维码：</label>
+                <div class="col-sm-8">
+                    <input name="qrcode" th:field="*{qrcode}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">设备id：</label>
+                <div class="col-sm-8">
+                    <input name="deviceId" th:field="*{deviceId}" class="form-control" type="text">
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/deviceLink";
+        $("#form-deviceLink-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-deviceLink-edit').serialize());
+            }
+        }
+    </script>
+</body>
+</html>

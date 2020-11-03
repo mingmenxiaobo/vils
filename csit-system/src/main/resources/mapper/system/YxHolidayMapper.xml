@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csit.system.mapper.YxHolidayMapper">
+    
+    <resultMap type="YxHoliday" id="YxHolidayResult">
+        <result property="id"    column="ID"    />
+        <result property="dept"    column="dept"    />
+        <result property="repdate"    column="repDate"    />
+        <result property="repyear"    column="repYear"    />
+        <result property="repmonth"    column="repMonth"    />
+        <result property="repday"    column="repDay"    />
+        <result property="status"    column="status"    />
+    </resultMap>
+
+    <sql id="selectYxHolidayVo">
+        select ID, (select dept_name from sys_dept where dept_id=dept ) dept, repDate, repYear, repMonth, repDay, status from yx_holiday
+    </sql>
+
+    <select id="selectYxHolidayList" parameterType="YxHoliday" resultMap="YxHolidayResult">
+        <include refid="selectYxHolidayVo"/>
+        <where>  
+            <if test="dept != null  and dept != ''"> and dept = #{dept}</if>
+            <if test="repdate != null and repdate != ''"> and repdate = #{repdate}</if>
+            <if test="repyear != null and repyear != ''"> and repYear = #{repyear}</if>
+            <if test="repmonth != null and repmonth != ''"> and repMonth = #{repmonth}</if>
+            <if test="status != null  and status != ''"> and status = #{status}</if>
+        </where>
+    </select>
+    
+    <select id="selectYxHolidayById" parameterType="Long" resultMap="YxHolidayResult">
+        <include refid="selectYxHolidayVo"/>
+        where ID = #{id}
+    </select>
+        
+    <insert id="insertYxHoliday" parameterType="YxHoliday" useGeneratedKeys="true" keyProperty="id">
+        insert into yx_holiday
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="dept != null  and dept != ''">dept,</if>
+            <if test="repdate != null  and repdate != ''">repDate,</if>
+            <if test="repyear != null ">repYear,</if>
+            <if test="repmonth != null ">repMonth,</if>
+            <if test="repday != null ">repDay,</if>
+            <if test="status != null  and status != ''">status,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="dept != null  and dept != ''">#{dept},</if>
+            <if test="repdate != null  and repdate != ''">#{repdate},</if>
+            <if test="repyear != null ">#{repyear},</if>
+            <if test="repmonth != null ">#{repmonth},</if>
+            <if test="repday != null ">#{repday},</if>
+            <if test="status != null  and status != ''">#{status},</if>
+         </trim>
+    </insert>
+
+    <insert id="insertHBatch" parameterType="java.util.List" >
+        replace into yx_holiday(dept, repDate, repYear, repMonth, repDay, status)
+        <trim prefix="values "   suffixOverrides=",">
+            <foreach item="item" collection="list"  index="index" >
+                ('${item.dept}','${item.repdate}', ${item.repyear},${item.repmonth},${item.repday},'${item.status}'),
+            </foreach>
+        </trim>
+    </insert>
+
+
+    <update id="updateYxHoliday" parameterType="YxHoliday">
+        update yx_holiday
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="dept != null  and dept != ''">dept = #{dept},</if>
+            <if test="repdate != null  and repdate != ''">repDate = #{repdate},</if>
+            <if test="repyear != null ">repYear = #{repyear},</if>
+            <if test="repmonth != null ">repMonth = #{repmonth},</if>
+            <if test="repday != null ">repDay = #{repday},</if>
+            <if test="status != null  and status != ''">status = #{status},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteYxHolidayById" parameterType="Long">
+        delete from yx_holiday where ID = #{id}
+    </delete>
+
+    <delete id="deleteYxHolidayByIds" parameterType="String">
+        delete from yx_holiday where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

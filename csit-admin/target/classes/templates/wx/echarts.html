@@ -1,0 +1,1193 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+	<head>
+		<th:block th:include="include :: header('办公桌使用报告')" />
+
+		<style>
+			*{font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif}
+			button,div{font-family: "open sans", "Helvetica Neue", Helvetica, Arial, sans-serif}
+			.backBlue{background-color: #00011d}
+        .warn-content{
+            padding-left:0px;
+            padding-right:0px;
+
+        }
+
+			/*========================盒模型*/
+		#nav {
+
+				/*盒模型*/
+
+				display: -webkit-box;
+
+				display: -moz-box;
+
+				display: box;
+
+				/**/
+				margin: auto;
+
+			}
+
+
+
+			#nav {
+
+				width: 100%;
+				/*横向*/
+
+				-webkit-box-orient: horizontal;
+
+				-moz-box-orient: horizontal;
+
+				box-orient: horizontal;
+
+			}
+
+
+			#box1, #box2 ,#box3 {
+				/*占有比例*/
+				-webkit-box-flex: 1;
+				-moz-box-flex: 1;
+				box-flex: 1;
+				text-align:center;
+				border-right: 3px solid;
+				-moz-border-image:url(../../division.png) 30 30 stretch;	/* Old Firefox */
+				-webkit-border-image:url(../../division.png) 30 30 stretch;	/* Safari and Chrome */
+				-o-border-image:url(../../division.png) 30 30 stretch;	/* Opera */
+				border-image:url(../../division.png) 30 30 stretch;
+			}
+
+			#box4, #box5 ,#box6 {
+
+				/*占有比例*/
+
+				-webkit-box-flex: 1;
+				-moz-box-flex: 1;
+				box-flex: 1;
+				text-align:center;
+				border-right: 3px solid;
+				-moz-border-image:url(../../division1.png) 30 30 stretch;	/* Old Firefox */
+				-webkit-border-image:url(../../division1.png) 30 30 stretch;	/* Safari and Chrome */
+				-o-border-image:url(../../division1.png) 30 30 stretch;	/* Opera */
+				border-image:url(../../division1.png) 30 30 stretch;
+			}
+
+			.zhuangtai .content {
+            border-left:2px solid #a1c3f9;
+            width:28%;
+            float:left;
+			margin-right:10px;
+            border-radius:3px;
+            -webkit-align-items:center;
+            align-items:center;
+        }
+        .zhuangtai .content:first-child
+        {
+			border-left:0px;
+            margin-left:0px;
+        }
+		.zhuangtai .content:last-child
+		{
+			margin-left:0px;
+		}
+
+        .imgContent {
+            height:76px;
+            -webkit-justify-content:center;
+            justify-content:center;
+            display:-webkit-flex;
+            display:flex;
+            -webkit-align-items:center;
+            align-items:center;
+
+        }
+		.imgContent img{
+			height:80px;
+			width: 40px;
+		}
+
+
+        .titleContent {
+            height:38px;
+            color:#d5e5fe;
+            line-height:38px;
+            text-align: center;
+
+        }
+        .timeContent {
+            height:28px;
+            color:#FFFFFF;
+            line-height:28px;
+            text-align: center;
+        }
+
+        .text-cyan {
+            color:#FFFFFF;
+            font-size: 16pt;
+        }
+
+
+			.buttonList {
+				list-style: none;
+				 width: 100%;
+				float: left;
+				padding:0px;
+			}
+
+			.buttonList li {
+				display: inline;
+				line-height: 40px;
+				float:left;
+				width:32%;
+				border:1px solid #6597fc;
+			}
+
+			.active{
+				background: #6597fc;
+				color: #FFFFFF;
+			}
+			.buttonList a {
+				color: #fff;
+				text-decoration: none;
+				padding: 20px 20px;
+			}
+
+			.buttonList a:hover {
+				background-color: #060;
+			}
+
+        .select{
+            height: 30px;
+            width: 32%;
+            float: left;
+            margin-left:0px;
+        }
+		.buttonList li:first-child
+        {
+           border-radius:10px 0px 0px 10px;
+        }
+		.buttonList li:last-child
+		{
+			border-radius:0px 10px 10px 0px;
+		}
+
+        .select button{
+            border:1px solid #6597fc;
+            height: 35px;
+            line-height: 35px;
+            width: 95%;
+			font-size: 12pt;
+            border-radius: 5px;
+        }
+
+        .not-active{
+            background: none;
+			color: #6597fc;
+        }
+
+
+            .ring1 img{
+                margin-top: 20px;
+            }
+
+            .ring2 img{
+                margin-top: 20px;
+            }
+
+
+            .info-content {
+
+                background-color:#fff;
+
+            }
+            .info-content .info {
+                width:96%;
+                height:38px;
+                line-height:38px;
+                margin-left:auto;
+                margin-right:auto;
+
+            }
+            .left {
+                float:left;font-weight: bold;margin-left:10px;width:45%;text-align: left;
+
+            }
+            .right {
+                float:right;margin-right:15px;width: 45%; text-align: right;
+
+            }
+            .btn-content{
+                margin-top:15px;
+                width:96%;
+                margin-left: auto;
+                margin-right: auto;
+                height: 80px;
+                line-height: 80px;
+
+
+            }
+            .btn-content .btn{
+                border-radius: 60px;
+                font-size: 20px;
+                color: #fff;
+                width: 95%;
+                margin-left: auto;
+                margin-right: auto;
+				background-color:#6597fc ;
+
+
+			}
+            .warnt-content{
+                width: 96%;
+                height: 160px;
+                border-radius: 8px;
+                margin-bottom:50px;
+            }
+            .warnt-content .warn-title{
+                text-align: left;
+                margin-left: 25px;
+                margin-top: 20px;
+                font-size: 15px;
+                color:#000;
+            }
+
+            .warnt-content .warn-info{
+                text-align: left;
+                margin-top: 15px;
+				color: #a3a3a3;
+            }
+            .warnt-content .warn-info-top{
+                text-align: left;
+                height: 60px;
+            }
+            .warnt-content .warn-info-bottom{
+                text-align: left;
+                height: 80px;
+            }
+            .warnt-content .warn-info .info-left{
+                float: left;
+                width: 8%;
+                text-align: center;
+            }
+            .warnt-content .warn-info .info-right{
+                float: left;
+                width: 88%;
+                color: #a3a3a3;
+            }
+            .margin-top-style{
+                margin-top:15px;
+            }
+            .warn-bottom {
+				width: 100%;
+				align-items: center;
+			}
+
+        </style>
+	</head>
+
+	<body class="gray-bg" style="background-color:#edf0f7"  onload="getDateWeek();">
+    <div style="width: 100%;float: left;text-align:center;margin-top:0px">
+
+		<div style="width: 95%;border-radius:15px;background-color: #FFFFFF;margin-right: auto;margin-left: auto">
+		<div class="row " style="border-radius:15px;background-color:#72a8fe;color:#FFFFFF;
+		width:100%; margin-right: auto;margin-left: auto">
+			<div style="width:100%;text-align: center;padding: 25px;font-size: 20px">
+				办公桌使用报告
+			</div>
+			<div id="nav" >
+				<div id="box1" >
+					<div style="float: left;width:99%">
+					<div class="imgContent ">
+						<img src="../../stand-ico.png" style="height: 78px;width:34px">
+					</div>
+					<div class="titleContent"> 当前站的时长</div>
+					<div class="timeContent">
+						<span class="text-cyan">[[${Last.duration}]]</span> 分钟
+					</div>
+					</div>
+
+					<div style=" float: left; border:linear-gradient(to bottom,#8eb9fd,#8eb9fd,#8eb9fd);width:1px;height: 100px;"></div>
+
+				</div>
+				<div id="box2"  >
+					<div class="imgContent"  >
+						<img src="../../site.png" style="height: 74px;width: 43px">
+					</div>
+					<div class="titleContent"> 当前坐的时长</div>
+					<div class="timeContent">
+						<span class="text-cyan">[[${Last.seatstatus}]]</span> 分钟
+					</div>
+				</div>
+				<div id="box3" >
+					<div class="imgContent">
+						<img src="../../usedstatus-ico.png" style="height: 50px;width:34px">
+					</div>
+					<div class="titleContent">升降桌高度</div>
+					<div class="timeContent">
+						<span class="text-cyan">[[${Last.high}]]</span> 厘米
+					</div>
+				</div>
+			</div>
+			<div>&nbsp;</div>
+		</div>
+		<div class=" warn-content animated fadeInRight" style="height: 230px;width:95%;margin-left: auto;margin-right:auto; background-color: #FFFFFF; border-radius: 0px 0px 15px 15px;">
+			<div class="ibox-title " style="height: 60px;width:90%;margin-left: auto;margin-right: auto">
+				<ul class="buttonList">
+					<li class="active"> 日 </li>
+					<li> 月 </li>
+					<li> 年 </li>
+				</ul>
+
+			</div>
+			<div class="echarts" id="echarts-bar-chart" style="background-color: #FFFFFF; "></div>
+
+			<div class="echarts" id="echarts-bar-month" style="background-color: #FFFFFF; display: none">month</div>
+
+			<div class="echarts" id="echarts-bar-year" style="background-color: #FFFFFF;display: none "> year</div>
+
+		</div>
+		</div>
+
+		<div class="ibox-title" style=" width:95% ;height:65px;background-color:#edf0f7; margin-left: auto;margin-right: auto;
+		margin-top: 10px;margin-bottom:10px">
+			<div style="width: 30%;float: left;"><img src="../../user.png" style="width:80px"></div>
+			<div style="width: 60%;float: left;margin-top: 20px">
+				<div style="width: 100%;float: left;"><h5 id="bianhao"> 编号：00008</h5> </div>
+				<div style="width: 100%;float: left;text-align: left;color:#a3a3a3" id="tdtime" name="tdtime"></div>
+			</div>
+
+		</div>
+
+		<div class="col-sm-6" style="margin-top:30px; float:left; padding:0px;width:100%; ">
+			<div style="width:95% ;border-radius: 15px 15px 0px 0px ; background-color:#FFFFFF; margin-left: auto;margin-right: auto; text-align: left">
+				<img src="../../hengang.png" style="height:10px;margin-left: 40px;margin-top:-10px;width:40px">
+			</div>
+			<div style="width:95% ; height: 75px;background-color:#FFFFFF; margin-left: auto;margin-right: auto; text-align: left">
+			<div style="width:60%;float: left;font-size: 15pt;background-color:#FFFFFF;margin-left: 20px;margin-top: 10px ">
+				<div style="width:90%;float: left;font-size: 15pt;background-color:#FFFFFF; margin-top: 10px">站立时长比</div>
+				<div style="width:90%;float: left;font-size: 11pt;background-color:#FFFFFF;color:#8b8c8e;margin-top:5px">站立阶段持续时间及占比</div>
+			</div>
+				<div style="width:30%;float: left;background-color:#FFFFFF;margin-top: 20px">
+				<img src="../../good1.png" style="height:50px;margin-left: 20px;margin-top:-3px;width:100px;float: right">
+				</div>
+				</div>
+
+			<div id="chart_msc4" class="floatLeft" style="height:300px;width:95%;margin-right: auto;margin-left: auto; background-color:#FFFFFF;"></div>
+
+			<div id="nav"  style="background-color: #FFFFFF;width:95%; margin-left: auto;margin-right: auto; ">
+				<div id="box4" >
+					<div class="imgContent " >
+						<img src="../../zhanliren.png" style="width: 80px;height:80px">
+					</div>
+					<div class="titleContent"  style="color:#a3a3a3"> 站的时长</div>
+					<div class="timeContent" style="color:#a3a3a3">
+						<span class="text-cyan" style="color:#000">[[${currentStandTime}]] </span> 分钟
+					</div>
+				</div>
+				<div id="box5" >
+					<div class="imgContent" >
+						<img src="../../zuoren.png" style="width: 80px;height: 80px">
+					</div>
+					<div class="titleContent"  style="color:#a3a3a3">坐的时长</div>
+					<div class="timeContent"  style="color:#a3a3a3">
+						<span class="text-cyan" style="color:#000">[[${currentSitTime}]] </span> 分钟
+					</div>
+				</div>
+				<div id="box6"  >
+					<div class="imgContent">
+						<img src="../../123.png" style="width: 80px;height: 80px">
+					</div>
+					<div class="titleContent"  style="color:#a3a3a3">站的次数</div>
+					<div class="timeContent"  style="color:#a3a3a3">
+						<span class="text-cyan" style="color:#000">[[${standNum}]]</span> 次
+					</div>
+				</div>
+			</div>
+			<div style="width:95%; height: 30px; margin-left: auto;margin-right: auto;margin-top:0px; background-color: #FFFFFF " >
+				&nbsp;
+			</div>
+			<div  style="width: 100%;float:left; margin-left: auto;margin-right: auto;margin-top:0px; ">
+
+
+			<div class=" warn-content info-content" style="width: 95%;margin-left: auto;margin-right: auto;margin-top:0px ">
+			<div class="info">
+				<div class="left">
+					<img src="../../tuoyuanh.png" style="width:12px;height: 12px;margin:5px">使用总时长
+				</div>
+				<div class="right">[[${TotalTime}]] 分钟
+				</div>
+			</div>
+			<div class="info">
+				<div class="left">
+					<img src="../../tuoyuanr.png" style="width:12px;height: 12px;margin:5px">平均每次站立时长
+				</div>
+				<div class="right">
+					[[${avgStandTime}]] 分钟
+				</div>
+			</div>
+			<div class="info">
+				<div class="left">
+					<img src="../../tuoyuanl.png" style="width:12px;height: 12px;margin:5px">燃烧卡路里
+				</div>
+				<div class="right">
+					[[${currentStandTime}]] 千卡
+				</div>
+			</div>
+			<div class="info">
+				<div class="left">
+					<img src="../../tuoyuanh.png" style="width:12px;height: 12px;margin:5px">久坐次数
+				</div>
+				<div class="right">
+					 [[${sitNum}]] 次
+				</div>
+			</div>
+			<div class="info">
+				<div class="left">
+					<img src="../../tuoyuanr.png" style="width:12px;height: 12px;margin:5px">最大久坐时长
+				</div>
+				<div class="right">
+				 [[${maxSitTime}]] 分钟
+				</div>
+			</div>
+			<div class="info">
+				<div class="left">
+					<img src="../../tuoyuanl.png" style="width:12px;height: 12px;margin:5px">最大连续站立时长
+				</div>
+				<div class="right">
+					[[${maxStandTime}]] 分钟
+				</div>
+			</div>
+		</div>
+			<div style="width: 95%;margin-left: auto;margin-right: auto; border-radius: 0px 0px 15px 15px;height: 20px;background-color: #FFFFFF">&nbsp;</div>
+
+			</div>
+			</div>
+		<div class="warn-bottom" style="width: 100%;float:left;">
+			<!--
+			<div class="btn-content">
+				<a class="btn" th:href="@{'../userReport/'+${qrcode}}">生成个人报告</a>
+			</div>
+			-->
+
+			<div class="btn-content">
+				<a class="btn"  onclick="goToMini();">生成办公桌使用报告</a>
+			</div>
+			<div class="warnt-content">
+				<div class="warn-title">
+					温馨提示
+				</div>
+				<div class="warn-info warn-info-top">
+					<div class="info-left">
+					 &nbsp;
+					</div>
+					<div class="info-right">
+						研究表明，站立办公比坐着办公多燃烧30%的卡路里:同时，每坐30分钟后站立8分钟，能够有效的舒缓身心和提高工作效率。<br/>持续坐的时长超过60分钟视为久坐。
+						<input type="hidden" id="days" th:value="${days}">
+						<input type="hidden" id="month" th:value="${month}">
+						<input type="hidden" id="year" th:value="${year}">
+						<input type="hidden" id="qrcode" th:value="${qrcode}">
+
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		</div>
+		<th:block th:include="include :: footer" />
+		<th:block th:include="include :: echarts-js" />
+	    <script src="../static/js/PercentPie.js" th:src="@{/js/PercentPie.js}"></script>
+	    <script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.3.2.js"></script>
+
+	<script th:src="@{/js/classie.js}"></script>
+	<script th:src="@{/js/modernizr.custom.js}"></script>
+	<script th:src="@{/js/notificationFx.js}"></script>
+
+	<link th:href="@{/css/ns-default.css}" rel="stylesheet"/>
+	<link th:href="@{/css/ns-style-growl.css}" rel="stylesheet"/>
+
+		<script type="text/javascript">
+
+			$(function() {
+
+				$('ul.buttonList li').on('click',function(e){
+					$(this).addClass("active").siblings().removeClass("active");
+					var index = $(this).index();
+					var info = $(this).html();
+					//alert(index + "----" + info);
+
+					if(index==0)
+					{
+						$("#echarts-bar-chart").show();
+						$("#echarts-bar-month").hide();
+						$("#echarts-bar-year").hide();
+
+					}
+					if(index==1)
+					{
+						$("#echarts-bar-chart").hide();
+						$("#echarts-bar-month").show();
+						$("#echarts-bar-year").hide();
+						 echartMonth();
+
+					}
+					if(index==2)
+					{
+						$("#echarts-bar-chart").hide();
+						$("#echarts-bar-month").hide();
+						$("#echarts-bar-year").show();
+						echartYear();
+
+					}
+				})
+
+				var daystr=document.getElementById("days").value;
+				//console.log(daystr);
+				var xAxisData = [];
+
+				var days=daystr.split(",");
+				for (var i = 0; i < days.length; i++) {
+					xAxisData.push(days[i]);
+					//console.log(days[i]);
+				}
+				xAxisData.push("24:00");
+
+				var data0 = [[${data0}]];
+				var data1 = [[${data1}]];
+				var data2 = [[${data2}]];
+				var data3 = [[${data3}]];
+				var data4 = [[${data4}]];
+
+
+
+				var barChart = echarts.init(document.getElementById("echarts-bar-chart"));
+				var baroption = {
+					legend: {
+						data: ['空', '坐', '久坐', '站'],
+						textStyle: {
+							color: '#a9a9a9', //字体颜色
+							fontSize: '16'
+						},
+					},
+					grid: {
+						top: '20%', //距上边距
+						height: '60%',
+					},
+				/*	tooltip: {
+						trigger: 'axis',
+						formatter:function (params, ticket, callback) {
+							var tip = '';
+							for (var i = 0; i < params.length; i++) {//这里是自己定义样式， params[i].marker 表示是否显示左边的那个小圆圈
+								if (params[i].value != 0) {
+									tip = tip + params[i].name +' '+params[i].marker + params[i].seriesName.substring(0, 4) + '<br/>';
+								}
+							}
+							return tip;
+						}
+					},*/
+					xAxis: {
+						data: xAxisData,
+						splitLine: {
+							show: false //去掉网格线
+						},
+						//boundaryGap: true,
+						axisLine: {
+							showMaxLabel: true,
+							lineStyle: {
+								color: '#a9a9a9', // x坐标轴的轴线颜色
+								width: 0 //这里是坐标轴的宽度,为0就是不显示
+							},
+						},
+					},
+					yAxis: {
+						show: false
+					},
+					series: [{
+							name: '空',
+							type: 'bar',
+							data: data0,
+							barWidth: 0,
+							itemStyle: {
+								normal: {
+									color: '#e4e4e4'
+								}
+							},
+							animationDelay: function(idx) {
+								return idx * 20;
+							}
+						},
+						{
+							name: '空',
+							type: 'bar',
+							data: data1,
+							barWidth: 10,
+							itemStyle: {
+								normal: {
+									color: '#'
+								}
+							},
+							animationDelay: function(idx) {
+								return idx * 20;
+							}
+						}, {
+							name: '坐',
+							type: 'bar',
+							data: data2,
+							barWidth: 10,
+							itemStyle: {
+								normal: {
+									color: '#6597fc'
+								}
+							},
+							animationDelay: function(idx) {
+								return idx * 10;
+							}
+						}, {
+							name: '久坐',
+							type: 'bar',
+							data: data3,
+							barWidth: 10,
+							itemStyle: {
+								normal: {
+									color: '#fccc99'
+								}
+							},
+							animationDelay: function(idx) {
+								return idx * 10;
+							}
+						}, {
+							name: '站',
+							type: 'bar',
+							data: data4,
+							barWidth: 10,
+							itemStyle: {
+								normal: {
+									color: '#6fe7b5'
+								}
+							},
+							animationDelay: function(idx) {
+								return idx * 10;
+							}
+						}
+
+					],
+					animationEasing: 'elasticOut',
+					animationDelayUpdate: function(idx) {
+						return idx * 5;
+					}
+				};
+
+
+				barChart.setOption(baroption);
+				window.onresize = barChart.resize;
+
+
+				/* =================================================  */
+				var baChart = echarts.init(document.getElementById("chart_msc4"));
+				var val1data2 = [{
+					value: [[${currentStandTime}]],
+					name: '站',
+				},
+					{
+						value: [[${currentSitTime=="0"?"1":currentSitTime}]],
+						name: '坐',
+					}
+
+				]
+
+				var arr = ['middleLost', [[${standRatio}]], val1data2, '站坐比']
+
+				var option2 = {
+					title: {
+						top: '45%',
+						left: 'center',
+						text: arr[3],
+						textStyle: {
+							color: '#000',
+							fontStyle: 'normal',
+							fontWeight: 'normal',
+							fontSize: 14
+						},
+						subtext: '' + (arr[1] * 100 / 100).toFixed(2) + '%',
+						subtextStyle: {
+							color: '#000',
+							fontSize: 22
+						}
+					},
+					tooltip: {
+						trigger: 'item',
+						formatter: function(res) {
+							//console.log(res)
+
+							if (res.componentSubType == 'liquidFill') {
+								// return res.seriesName + ': ' + (res.value * 10000 / 100).toFixed(2) + '%';
+							} else {
+								//  return '<span class="ii" style="background:' + res.color + ' "></span>' + res.name + ':<br/> ' + res.data.value;
+							}
+						}
+					},
+					series: [{
+						type: 'liquidFill',
+						itemStyle: {
+							normal: {
+								opacity: 0.2,
+								shadowBlur: 0,
+								shadowColor: 'red'
+							}
+						},
+						name: arr[3],
+						data: [{
+							value: 0.6,
+							itemStyle: {
+								normal: {
+									color: '#53d5ff',
+									opacity: 0.6
+								}
+							}
+						}],
+						//  background: '#fff',
+						color: ['#a4eaf8'],
+						center: ['50%', '50%'],
+						/*  backgroundStyle: {
+                              color: '#fff'
+                          },*/
+						label: {
+							normal: {
+								formatter: '',
+								textStyle: {
+									fontSize: 12
+								}
+							}
+						},
+						outline: {
+							itemStyle: {
+								borderColor: '#86c5ff',
+								borderWidth: 0
+							},
+							borderDistance: 0
+						}
+					},
+						{
+							type: 'pie',
+							radius: ['80%', '65%'],
+							color: ['#6fe7b5', '#6597fc'],
+							hoverAnimation: false, ////设置饼图默认的展开样式
+							label: {
+								show: false,
+								normal: {
+									formatter: '{b}\n{d}%',
+									show: false,
+									position: ''
+								},
+							},
+							labelLine: {
+								normal: {
+									show: false
+								}
+							},
+
+							itemStyle: { // 此配置
+								normal: {
+									borderWidth: 0,
+									borderColor: '#fff',
+								},
+								emphasis: {
+									borderWidth: 0,
+									shadowBlur: 0,
+									shadowOffsetX: 0,
+									shadowColor: 'rgba(0, 0, 0, 0.5)'
+								}
+							},
+							data: arr[2]
+						}
+					]
+				}
+
+				baChart.setOption(option2);
+				//window.onresize = brChart.resize;
+			});
+
+
+			function getDateWeek()
+			{
+				todayDate = new Date();
+				date = todayDate.getDate();
+				month= todayDate.getMonth() +1;
+				year= todayDate.getYear();
+				var dateweek = "";
+				if(navigator.appName == "Netscape")
+				{
+					dateweek = dateweek + (1900+year) + "年" + month + "月" + date + "日 ";
+				}
+				if(navigator.appVersion.indexOf("MSIE") != -1)
+				{
+					dateweek = dateweek + year + "年" + month + "月" + date + "日 ";
+				}
+
+				switch(todayDate.getDay())
+				{
+					case 0:dateweek += "（星期日）";break;
+					case 1:dateweek += "（星期一）";break;
+					case 2:dateweek += "（星期二）";break;
+					case 3:dateweek += "（星期三）";break;
+					case 4:dateweek += "（星期四）";break;
+					case 5:dateweek += "（星期五）";break;
+					case 6:dateweek += "（星期六）";break;
+				}
+				// alert(dateweek);
+				document.getElementById("tdtime").innerHTML=dateweek;
+			}
+
+			// 判断环境是否在微信小程序里
+			function isMiniProgram(){
+				var ua = navigator.userAgent.toLowerCase();
+				var envType='#';
+
+				if(ua.match(/MicroMessenger/i) == 'micromessenger'){ //微信环境
+					wx.miniProgram.getEnv(function(res) {
+						if (res.miniprogram) { // 小程序环境下逻辑
+							envType = true
+						}else { //非小程序环境下逻辑
+							envType =  false
+						}
+					})
+				}else{ //非微信环境逻辑
+					envType = false
+				}
+				return envType
+			}
+
+			function goToMini() {
+			　
+				wx.miniProgram.getEnv(function (res) {
+					if (res.miniprogram) {
+						wx.miniProgram.switchTab({url: '/pages/user/user'});
+						 
+					}
+				});
+			}
+
+
+				var month0 = [[${month0}]];
+				var month1 = [[${month1}]];
+				var month2 = [[${month2}]];
+				var month9 = [[${month9}]];
+
+		function mGetDate(){
+			var date = new Date();
+			var year = date.getFullYear();
+			var month = date.getMonth()+1;
+			var d = new Date(year, month, 0);
+			return d.getDate();
+		}
+
+		function echartMonth()
+		{
+			/*==================月=======================================*/
+
+			var xAxisMonth = [];
+
+			let date=new Date();
+			var m=date.getMonth()+1;
+
+			for (var i = 1; i <=mGetDate(); i++) {
+				xAxisMonth.push(m+'-'+i);
+				//console.log(m+'-'+i);
+			}
+
+
+
+			var monthChart = echarts.init(document.getElementById("echarts-bar-month"));
+
+
+			var	monthoption = {
+
+				legend: {
+					data: [ '空','坐', '久坐','站'],
+					textStyle: {
+						color: '#a9a9a9', //字体颜色
+						fontSize: '16'
+					},
+				},
+				grid: {
+					left: '3%',
+					right: '4%',
+					bottom: '3%',
+					containLabel: true,
+					height:120
+				},
+				xAxis: [
+					{
+						type: 'category',
+						data: xAxisMonth,
+						splitLine: {
+							show: false //去掉网格线
+						},
+						axisLabel: {
+							show: true,
+							showMaxLabel: true,
+							textStyle: {
+								color: '#a9a9a9'
+							}
+						}
+					}
+				],
+
+				yAxis: [
+					{
+						type: 'value',
+						show: false
+					}
+				],
+				series: [
+
+					{
+						name: '站',
+						type: 'bar',
+						stack: '广告',
+						data:month2,
+						barWidth: 10,
+						itemStyle: {
+							normal: {
+								color: '#6fe7b5'
+							}
+						},
+					},
+					{
+						name: '久坐',
+						type: 'bar',
+						stack: '广告',
+						data: month9,
+						barWidth: 10,
+						itemStyle: {
+							normal: {
+								color: '#fccc99'
+							}
+						},
+					},
+					{
+						name: '坐',
+						type: 'bar',
+						stack: '广告',
+						data: month1,
+						barWidth: 10,
+						itemStyle: {
+							normal: {
+								color: '#6597fc'
+							}
+						},
+					},
+
+					{
+						name: '空',
+						type: 'bar',
+						stack: '广告',
+						data: month0,
+						barWidth:10,
+						itemStyle: {
+							normal: {
+								color: '#e4e4e4'
+							}
+						},
+					},
+
+				],
+				tooltip: {
+					trigger: 'item',
+					formatter: function(res) {
+						//console.log(res)
+
+						if (res.componentSubType == 'liquidFill') {
+							// return res.seriesName + ': ' + (res.value * 10000 / 100).toFixed(2) + '%';
+						} else {
+							//  return '<span class="ii" style="background:' + res.color + ' "></span>' + res.name + ':<br/> ' + res.data.value;
+						}
+					}
+				}
+			};
+
+			monthChart.setOption(monthoption);
+			window.onresize = monthChart.resize;
+
+			/*==============================月=======================*/
+
+
+		}
+
+			/*==================年=======================================*/
+				var years0 = [[${year0}]];
+				var years1 = [[${year1}]];
+				var years2 = [[${year2}]];
+				var years9 = [[${year9}]];
+			//	var years4 = [[${years4}]];
+
+			function echartYear()
+			{
+
+				var date = new Date();
+				var year = date.getFullYear();
+				var xAxisYear = [];
+				for (var i = 1; i <=12; i++) {
+					xAxisYear.push(year+'-'+i);
+					//console.log(year+'-'+i);
+				}
+
+
+
+				var yearChart = echarts.init(document.getElementById("echarts-bar-year"));
+
+
+				var	yearoption = {
+
+					legend: {
+						data: [ '空','坐', '久坐','站'],
+						textStyle: {
+							color: '#a9a9a9', //字体颜色
+							fontSize: '16'
+						},
+					},
+					grid: {
+						left: '3%',
+						right: '4%',
+						bottom: '3%',
+						containLabel: true,
+						height:120
+					},
+					xAxis: [
+						{
+							type: 'category',
+							data: xAxisYear,
+							splitLine: {
+								show: false //去掉网格线
+							},
+							axisLabel: {
+								show: true,
+								showMaxLabel: true,
+								textStyle: {
+									color: '#a9a9a9'
+								}
+							}
+						}
+					],
+
+					yAxis: [
+						{
+							type: 'value',
+							show: false
+						}
+					],
+					series: [
+
+						{
+							name: '站',
+							type: 'bar',
+							stack: '广告',
+							data: years2,
+							barWidth: 20,
+							itemStyle: {
+								normal: {
+									color: '#6fe7b5'
+								}
+							},
+						},
+						{
+							name: '久坐',
+							type: 'bar',
+							stack: '广告',
+							data: years9,
+							barWidth: 20,
+							itemStyle: {
+								normal: {
+									color: '#fccc99'
+								}
+							},
+						},
+						{
+							name: '坐',
+							type: 'bar',
+							stack: '广告',
+							data: years1,
+							barWidth: 20,
+							itemStyle: {
+								normal: {
+									color: '#6597fc'
+								}
+							},
+						},
+
+						{
+							name: '空',
+							type: 'bar',
+							stack: '广告',
+							data: years0,
+							barWidth:20,
+							itemStyle: {
+								normal: {
+									color: '#e4e4e4'
+								}
+							},
+						},
+
+					],
+					tooltip: {
+						trigger: 'item',
+						formatter: function(res) {
+							console.log(res)
+
+							if (res.componentSubType == 'liquidFill') {
+								// return res.seriesName + ': ' + (res.value * 10000 / 100).toFixed(2) + '%';
+							} else {
+								//  return '<span class="ii" style="background:' + res.color + ' "></span>' + res.name + ':<br/> ' + res.data.value;
+							}
+						}
+					}
+				};
+
+				yearChart.setOption(yearoption);
+				window.onresize = yearChart.resize;
+
+				/*==============================月=======================*/
+
+
+			}
+
+			ShowMassage() ;
+			function ShowMassage() {
+				setTimeout( function() {
+                     if([[${sitNum}]]>0) {
+						 var notification = new NotificationFx({
+							 message: '<p>您已经发生了[[${sitNum}]]次久坐，请合理安排坐立时间.</p>',
+							 layout: 'growl',
+							 effect: 'slide',
+							 type: 'notice', // notice, warning or error
+							 onClose: function () {
+								 //bttn.disabled = false;
+							 }
+						 });
+
+						 notification.show();
+					 }else
+					 {
+						 var notification = new NotificationFx({
+							 message: '<p>您的办公习惯很健康，请继续保持.</p>',
+							 layout: 'growl',
+							 effect: 'slide',
+							 type: 'notice', // notice, warning or error
+							 onClose: function () {
+								 //bttn.disabled = false;
+							 }
+						 });
+
+						 notification.show();
+
+					 }
+				}, 1200 );
+
+
+			}
+
+
+		</script>
+	</body>
+</html>

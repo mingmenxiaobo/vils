@@ -1,0 +1,544 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.SysCountlistMapper">
+
+    <resultMap id="StudentResult" type="SysStudent">
+        <id     property="studentid"       column="studentid"        />
+        <result property="studentCode"     column="student_code"      />
+        <result property="studentName"      column="student_name"       />
+        <result property="birthday"     column="birthday"      />
+        <result property="createBy"       column="create_by"    />
+        <result property="createTime"       column="create_time"    />
+        <result property="updateBy"       column="update_by"    />
+        <result property="updateTime"       column="update_time"    />
+        <result property="schoolTime"       column="school_time"    />
+        <result property="sex"       column="sex"    />
+        <result property="userId"       column="user_id"    />
+        <result property="studentCity"       column="student_city"    />
+        <result property="studentArea"       column="student_area"    />
+        <result property="studentSchool"       column="student_school"    />
+        <result property="studentGrade"       column="student_grade"    />
+        <result property="studentClass"       column="student_class"    />
+        <result property="counta"       column="counta"    />
+        <result property="countb"       column="countb"    />
+        <result property="school"       column="school"    />
+        <result property="countaa"       column="countaa"    />
+        <result property="countbb"       column="countbb"    />
+        <result property="grade"       column="grade"    />
+    </resultMap>
+
+    <resultMap id="StudentDetailResult" type="SysStudentDetail">
+        <id     property="id"       column="id"        />
+        <result property="studentCode"     column="student_code"      />
+        <result property="studentName"      column="student_name"       />
+        <result property="birthday"     column="birthday"      />
+        <result property="checkdate"     column="checkdate"    />
+        <result property="lefteyeVision"       column="lefteyeVision"    />
+        <result property="righteyeVision"       column="righteyeVision"    />
+        <result property="createBy"       column="create_by"    />
+        <result property="createTime"       column="create_time"    />
+        <result property="updateBy"       column="update_by"    />
+        <result property="updateTime"       column="update_time"    />
+        <result property="time"       column="timeofday"    />
+        <result property="month"       column="month"    />
+        <association property="student" javaType="SysStudent">
+            <result property="studentCode"     column="student_code"      />
+            <result property="studentName"      column="student_name"       />
+            <result property="birthday"     column="birthday"      />
+            <result property="createBy"       column="create_by"    />
+            <result property="createTime"       column="create_time"    />
+            <result property="updateBy"       column="update_by"    />
+            <result property="updateTime"       column="update_time"    />
+            <result property="schoolTime"       column="school_time"    />
+            <result property="sex"       column="sex"    />
+            <result property="userId"       column="user_id"    />
+        </association>
+    </resultMap>
+
+
+    <resultMap id="deptResult" type="SysDept">
+        <id     property="deptId"   column="dept_id"     />
+        <result property="parentId" column="parent_id"   />
+        <result property="deptName" column="dept_name"   />
+        <result property="orderNum" column="order_num"   />
+        <result property="leader"   column="leader"      />
+        <result property="status"   column="dept_status" />
+    </resultMap>
+
+
+
+    <resultMap id="RoleResult" type="SysRole">
+        <id     property="roleId"       column="role_id"        />
+        <result property="roleName"     column="role_name"      />
+        <result property="roleKey"      column="role_key"       />
+        <result property="roleSort"     column="role_sort"      />
+        <result property="dataScope"     column="data_scope"    />
+        <result property="status"       column="role_status"    />
+    </resultMap>
+
+
+    <resultMap id="GradeResult" type="SysGrade">
+        <result property="userId"     column="userId"      />
+        <result property="countaa"      column="countaa"       />
+        <result property="countbb"     column="countbb"      />
+        <result property="grade"     column="grade"    />
+        <result property="visionStandard"     column="vision_standard"    />
+    </resultMap>
+
+    <resultMap id="ClassResult" type="SysClass">
+        <result property="userId"     column="userId"      />
+        <result property="countaaa"      column="countaaa"       />
+        <result property="countbbb"     column="countbbb"      />
+        <result property="studentClass"     column="studentClass"    />
+        <result property="visionStandard"     column="vision_standard"    />
+    </resultMap>
+
+    <resultMap id="SchoolResult" type="SysSchool">
+        <result property="userId"     column="userId"      />
+        <result property="counta"      column="counta"       />
+        <result property="countb"     column="countb"      />
+        <result property="school"     column="school"    />
+    </resultMap>
+
+    <resultMap id="TrendResult" type="SysTrend">
+        <id     property="id"       column="id"        />
+        <result property="studentCode"     column="student_code"      />
+        <result property="studentName"      column="student_name"       />
+        <result property="checkdate"     column="checkdate"    />
+        <result property="lefteyeVision"       column="lefteyeVision"    />
+        <result property="righteyeVision"       column="righteyeVision"    />
+        <result property="time"       column="timeofday"    />
+        <result property="createBy"       column="create_by"    />
+        <result property="createTime"       column="create_time"    />
+        <result property="updateBy"       column="update_by"    />
+        <result property="updateTime"       column="update_time"    />
+        <result property="userId"       column="user_id"    />
+        <result property="studentCity"       column="student_city"    />
+        <result property="studentArea"       column="student_area"    />
+        <result property="studentSchool"       column="student_school"    />
+        <result property="studentGrade"       column="student_grade"    />
+        <result property="studentClass"       column="student_class"    />
+        <result property="number"       column="number"    />
+        <result property="deptName"       column="dept_name"    />
+        <result property="mount"       column="mount"    />
+    </resultMap>
+
+
+    <resultMap id="ClassTrendResult" type="SysClassTrend">
+        <id     property="id"       column="id"        />
+        <result property="userId"       column="user_id"    />
+        <result property="studentCity"       column="studentCity"    />
+        <result property="studentArea"       column="studentArea"    />
+        <result property="studentSchool"       column="studentSchool"    />
+        <result property="studentGrade"       column="studentGrade"    />
+        <result property="studentClass"       column="studentClass"    />
+        <result property="number"       column="number"    />
+        <result property="mount"       column="mount"    />
+    </resultMap>
+
+
+
+
+    <select id="selectStudentList" parameterType="SysStudent" resultMap="StudentResult">
+        select a.studentid,a.student_code,a.student_name,a.birthday,a.create_by,a.create_time,a.update_by,a.update_time,a.school_time,
+        a.sex,a.user_id,
+        (select dept_name from sys_dept where dept_id=a.student_city) student_city,
+        (select dept_name from sys_dept where dept_id=a.student_area) student_area,
+        (select dept_name from sys_dept where dept_id=a.student_school) student_school,
+        (select dept_name from sys_dept where dept_id=a.student_grade) student_grade,
+        (select dept_name from sys_dept where dept_id=a.student_class) student_class
+        from student a
+        left join sys_dept d on a.user_id = d.dept_id
+        where 1=1
+        <if test="userId != null and userId != 0 and userId != 127">
+            AND (a.user_id = #{userId} OR a.user_id IN ( SELECT t.dept_id FROM sys_dept t WHERE FIND_IN_SET (#{userId},ancestors) ))
+        </if>
+        <!-- 数据范围过滤 -->
+        ${params.dataScope}
+    </select>
+
+    <select id="selectStudentById" parameterType="String" resultMap="StudentResult">
+        select a.studentid,a.student_code,a.student_name,a.birthday,a.create_by,a.create_time,a.update_by,a.update_time,a.school_time,
+        a.sex,a.user_id from student a
+        where a.studentid=#{studentid}
+    </select>
+
+    <insert id="insertStudentData" parameterType="SysStudent" useGeneratedKeys="true" keyProperty="studentid">
+        insert into student(
+        <if test="studentCode != null and studentCode != ''">student_code,</if>
+        <if test="studentName != null and studentName != ''">student_name,</if>
+        <if test="birthday != null and birthday != ''">birthday,</if>
+        <if test="schoolTime != null and schoolTime != ''">school_time,</if>
+        <if test="sex != null and sex != ''">sex,</if>
+        <if test="studentCity != null and studentCity != ''">student_city,</if>
+        <if test="studentArea != null and studentArea != ''">student_area,</if>
+        <if test="studentSchool != null and studentSchool != ''">student_school,</if>
+        <if test="studentGrade != null and studentGrade != ''">student_grade,</if>
+        <if test="studentClass != null and studentClass != ''">student_class,</if>
+        <if test="userId != null and userId != ''">user_id,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        create_time,
+        <if test="updateBy != null and updateBy != ''">update_by,</if>
+        update_time
+        )values(
+        <if test="studentCode != null and studentCode != ''">#{studentCode},</if>
+        <if test="studentName != null and studentName != ''">#{studentName},</if>
+        <if test="birthday != null and birthday != ''">#{birthday},</if>
+        <if test="schoolTime != null and schoolTime != ''">#{schoolTime},</if>
+        <if test="sex != null and sex != ''">#{sex},</if>
+        <if test="studentCity != null and studentCity != ''">#{studentCity},</if>
+        <if test="studentArea != null and studentArea != ''">#{studentArea},</if>
+        <if test="studentSchool != null and studentSchool != ''">#{studentSchool},</if>
+        <if test="studentGrade != null and studentGrade != ''">#{studentGrade},</if>
+        <if test="studentClass != null and studentClass != ''">#{studentClass},</if>
+        <if test="userId != null and userId != ''">#{userId},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        sysdate(),
+        <if test="updateBy != null and updateBy != ''">#{updateBy},</if>
+        sysdate()
+        )
+    </insert>
+
+    <update id="updateStudent" parameterType="SysStudent">
+        update student
+        <set>
+            <if test="studentCode != null and studentCode != ''">student_code = #{studentCode},</if>
+            <if test="studentName != null and studentName != ''">student_name = #{studentName},</if>
+            <if test="birthday != null and birthday != ''">birthday = #{birthday},</if>
+            <if test="schoolTime != null and schoolTime != ''">school_time = #{schoolTime},</if>
+            <if test="sex != null and sex != ''">sex = #{sex},</if>
+            <if test="userId != null and userId != ''">user_id = #{userId},</if>
+            <if test="updateBy != null and updateBy != ''">update_by = #{updateBy},</if>
+            update_time = sysdate()
+        </set>
+        where studentid = #{studentid}
+    </update>
+
+    <select id="selectStudentDataList" parameterType="SysStudentDetail" resultMap="StudentDetailResult">
+		select a.student_code,a.student_name,a.birthday,a.school_time,a.sex,b.id,b.checkdate,b.lefteyeVision,b.righteyeVision,b.timeofday,b.create_by,b.create_time,b.update_by,b.update_time from student a
+		left join student_details b on a.student_code=b.student_code where b.student_code=#{studentCode}
+	</select>
+
+
+    <select id="selectStudentByCode" parameterType="String" resultMap="StudentResult">
+		select * from student where student_code=#{studentCode}
+	</select>
+
+
+    <insert id="insertStudentDetails" parameterType="SysStudentDetail" useGeneratedKeys="true" keyProperty="id">
+        insert into student_details(
+        <if test="studentCode != null and studentCode != ''">student_code,</if>
+        checkdate,
+        <if test="lefteyeVision != null and lefteyeVision != ''">lefteyeVision,</if>
+        <if test="righteyeVision != null and righteyeVision != ''">righteyeVision,</if>
+        <if test="createBy != null and createBy != ''">create_by,</if>
+        <if test="time != null and time != ''">timeofday,</if>
+        create_time
+        )values(
+        <if test="studentCode != null and studentCode != ''">#{studentCode},</if>
+        sysdate(),
+        <if test="lefteyeVision != null and lefteyeVision != ''">#{lefteyeVision},</if>
+        <if test="righteyeVision != null and righteyeVision != ''">#{righteyeVision},</if>
+        <if test="createBy != null and createBy != ''">#{createBy},</if>
+        <if test="time != null and time != ''">#{time},</if>
+        sysdate()
+        )
+    </insert>
+
+    <select id="selectStudentDept" parameterType="String"  resultType="java.util.Map">
+        select * from (
+        select (@rowNum := @rowNum + 1) as rowNum,a.* from (
+        select
+        SUBSTRING_INDEX( SUBSTRING_INDEX( a.ancestors, ',', help_topic_id + 2 ), ',',- 1 ) AS dept_id FROM mysql.help_topic m,
+        (SELECT ancestors   from sys_dept where dept_id = #{userId} ) a WHERE
+        help_topic_id  &lt; LENGTH( a.ancestors ) - LENGTH( REPLACE ( a.ancestors, ',', '' ) ) + 0
+        )a,(SELECT @rowNum:=0) b
+        )temp
+	</select>
+
+    <delete id="deleteStudentByIds" parameterType="String">
+        delete from student_details where id in
+        <foreach collection="array" item="id" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
+    <select id="selectStudentVision" parameterType="String" resultType="hashmap">
+        SELECT
+            month,lefteyeVision,righteyeVision
+        FROM
+        (
+            SELECT
+                DATE_FORMAT(checkdate, '%Y.%m.%d') month,lefteyeVision,righteyeVision,student_code
+            FROM
+                student_details
+            WHERE
+                DATE_FORMAT(checkdate, '%Y') = year(curdate())
+        )a where student_code=#{studentCode}
+    </select>
+
+    <select id="selectSchoolVision" resultMap="SchoolResult">
+        SELECT e.counta,ifnull(g.countb,0)countb,e.dept_name as school from (SELECT bb.*,cc.dept_name from(
+        select count(*)counta, student_school from(
+        select s.vision_standard,student_school,(select lefteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)lefteyeVision,
+        (select righteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)righteyeVision
+        from student a,student_compared s
+        )aa where lefteyeVision &gt;= (select vision_standard from student_compared limit 1) and righteyeVision &gt;= (select vision_standard from student_compared limit 1) group by student_school
+        )bb inner join sys_dept cc on bb.student_school = cc.dept_id ORDER BY dept_name)e
+        left join  (
+        SELECT bb.*,cc.dept_name from(
+        select count(*)countb, student_school from(
+        select s.vision_standard,student_school,(select lefteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)lefteyeVision,
+        (select righteyeVision from student_details where student_code = a.student_code order by 	checkdate desc limit 1)righteyeVision
+        from student a,student_compared s
+        )aa where lefteyeVision &lt; (select vision_standard from student_compared limit 1) or righteyeVision &lt; (select vision_standard from student_compared limit 1) group by student_school
+        )bb inner join sys_dept cc on bb.student_school = cc.dept_id ORDER BY dept_name) g on e.student_school=g.student_school
+    </select>
+
+
+
+    <select id="selectGradeVision" parameterType="SysGrade"  resultMap="GradeResult">
+        select gg.*,ifnull(ff.bcount,0)countbb from (
+        select aa.student_grade,bb.dept_name as grade,case when count2 &gt; 0 then count2 else count1 end countaa  from (
+        select distinct student_grade,0 as count1 from student
+        where 1=1
+         <if test="userId != null and userId != 0  and userId != 127">
+           and (student_city = #{userId} or student_area = #{userId} or student_school = #{userId}  or student_grade=#{userId})
+         </if>
+        )aa
+        left join
+        (
+        select student_grade,count(*)count2,cc.dept_name from(
+        select s.vision_standard,student_grade,(select lefteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)lefteyeVision,
+        (select righteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)righteyeVision from student a,student_compared s where 1=1
+         <if test="userId != null and userId != 0  and userId != 127">
+            and (student_city = #{userId} or student_area = #{userId} or student_school = #{userId}  or student_grade=#{userId})
+         </if>
+        )aa inner join sys_dept cc on aa.student_grade = cc.dept_id where lefteyeVision &gt;= (select vision_standard from student_compared limit 1) and righteyeVision &gt;= (select vision_standard from student_compared limit 1) group by student_grade
+        )bb on aa.student_grade = bb.student_grade
+        )gg
+        left join
+        (
+        SELECT bb.* from(
+        select count(*) bcount, student_grade from(
+        select student_grade,(select timeofday from student_details where student_code = a.student_code order by checkdate desc limit 1)timeofday from student a where 1=1
+        <if test="userId != null and userId != 0  and userId != 127">
+            and  (student_city = #{userId} or student_area = #{userId} or student_school = #{userId}  or student_grade=#{userId})
+         </if>
+        )aa where timeofday &gt;= 4  group by student_grade)bb
+        ) ff on gg.student_grade=ff.student_grade
+    </select>
+
+    <select id="selectGradeVision2" parameterType="SysGrade"  resultMap="GradeResult">
+        select gg.*,ifnull(ff.bcount,0)countbb from (
+        select aa.student_grade,bb.dept_name as grade,case when count2 &gt; 0 then count2 else count1 end countaa  from (
+        select distinct student_grade,0 as count1 from student
+        where 1=1
+        <if test="userId != null and userId != 0  and userId != 127">
+            and student_school = #{userId}
+        </if>
+        )aa
+        left join
+        (
+        select student_grade,count(*)count2,cc.dept_name from(
+        select s.vision_standard,student_grade,(select lefteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)lefteyeVision,
+        (select righteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)righteyeVision from student a,student_compared s where 1=1
+        <if test="userId != null and userId != 0  and userId != 127">
+            and student_school = #{userId}
+        </if>
+        )aa inner join sys_dept cc on aa.student_grade = cc.dept_id where lefteyeVision &gt;= (select vision_standard from student_compared limit 1) and righteyeVision &gt;= (select vision_standard from student_compared limit 1) group by student_grade
+        )bb on aa.student_grade = bb.student_grade
+        )gg
+        left join
+        (
+        SELECT bb.* from(
+        select count(*) bcount, student_grade from(
+        select student_grade,(select timeofday from student_details where student_code = a.student_code order by checkdate desc limit 1)timeofday from student a where 1=1
+        <if test="userId != null and userId != 0  and userId != 127">
+            and student_school = #{userId}
+        </if>
+        )aa where timeofday &gt;= 4  group by student_grade)bb
+        ) ff on gg.student_grade=ff.student_grade
+    </select>
+
+
+
+    <select id="checkSchool" parameterType="SysGrade" resultType="int">
+        select COUNT(student_school) count from student where 1=1
+        <if test="userId != null and userId != 0">
+            and  (student_city = #{userId} or student_area = #{userId} or student_school = #{userId}  or student_grade=#{userId})
+        </if>
+    </select>
+
+    <select id="selectVisionStandard" resultMap="GradeResult">
+        select vision_standard  from student_compared
+    </select>
+
+    <update id="updateVisionStandard" parameterType="SysGrade">
+        update student_compared
+        <set>
+            <if test="visionStandard != null and visionStandard != ''">vision_standard = #{visionStandard}</if>
+        </set>
+    </update>
+
+
+    <select id="selectClassVision" parameterType="SysClass"  resultMap="ClassResult">
+        select gg.*,ifnull(ff.bcount,0)countbbb from (
+        select aa.student_class,bb.dept_name as studentClass,case when count2 &gt; 0 then count2 else count1 end countaaa  from (
+        select distinct student_class,0 as count1 from student
+        where 1=1
+        <if test="userId != null and userId != 0 and userId != 127" >
+            and (student_city = #{userId} or student_area = #{userId} or student_school = #{userId}  or student_grade=#{userId} or student_class=#{userId})
+        </if>
+        )aa
+        left join
+        (
+        select student_class,count(*)count2,cc.dept_name from(
+        select s.vision_standard,student_class,(select lefteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)lefteyeVision,
+        (select righteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)righteyeVision from student a,student_compared s where 1=1
+        <if test="userId != null and userId != 0 and userId != 127">
+            and (student_city = #{userId} or student_area = #{userId} or student_school = #{userId}  or student_grade=#{userId} or student_class=#{userId})
+        </if>
+        )aa inner join sys_dept cc on aa.student_class = cc.dept_id where lefteyeVision &gt;= (select vision_standard from student_compared limit 1) and righteyeVision &gt;= (select vision_standard from student_compared limit 1) group by student_class
+        )bb on aa.student_class = bb.student_class
+        )gg
+        left join
+        (
+        SELECT bb.* from(
+        select count(*) bcount, student_class from(
+        select student_class,(select timeofday from student_details where student_code = a.student_code order by checkdate desc limit 1)timeofday from student a where 1=1
+        <if test="userId != null and userId != 0 and userId != 127">
+            and  (student_city = #{userId} or student_area = #{userId} or student_school = #{userId}  or student_grade=#{userId} or student_class=#{userId})
+        </if>
+        )aa where timeofday &gt;= 4  group by student_class)bb
+        ) ff on gg.student_class=ff.student_class
+    </select>
+
+
+    <select id="checkGrade" parameterType="SysClass" resultType="int">
+        select COUNT(student_grade) count from student where 1=1
+        <if test="userId != null and userId != 0">
+            and  (student_city = #{userId} or student_area = #{userId} or student_school = #{userId}  or student_grade=#{userId} or student_class=#{userId})
+        </if>
+    </select>
+
+    <select id="selectSchoolVisionTrend" resultMap="TrendResult">
+        SELECT a.*,b.dept_name from(select count(*) number, student_school,DATE_FORMAT(checkdate,'%m') as month from(
+        select checkdate,student_school,lefteyeVision,righteyeVision
+        from student_month_details a
+        )aa where (lefteyeVision &lt; (select vision_standard from student_compared limit 1) or righteyeVision &lt; (select vision_standard from student_compared limit 1)) group by student_school,month)a left join sys_dept b on a.student_school=b.dept_id
+    </select>
+
+    <select id="selectSchoolName" resultMap="TrendResult">
+        select b.dept_name,a.student_school from (select DISTINCT student_school from student_month_details)a
+        left join sys_dept b on a.student_school=b.dept_id ORDER BY dept_name desc
+    </select>
+
+    <select id="selectSchoolVisionTrendBystudentSchool" parameterType="String" resultMap="TrendResult">
+        select count(*)number,month from(
+                select checkdate,student_school,lefteyeVision,DATE_FORMAT(checkdate,'%m') as month,
+                righteyeVision
+                from student_month_details a where DATE_FORMAT(NOW(), '%Y') +'-01-01 00:00:00' and DATE_FORMAT(NOW(), '%Y') +'-12-31 00:00:00'
+                  and  student_school=#{studentSchool}
+                )aa where (lefteyeVision &lt; (select vision_standard from student_compared limit 1)
+            or righteyeVision &lt; (select vision_standard from student_compared limit 1)) group by month
+             union
+           (
+           select * from(
+            select 0 as number,'01' as month
+            union
+            select 0 as number,'02' as month
+            union
+            select 0 as number,'03' as month
+            union
+            select 0 as number,'04' as month
+            union
+            select 0 as number,'05' as month
+            union
+            select 0 as number,'06' as month
+            union
+            select 0 as number,'07' as month
+            union
+            select 0 as number,'08' as month
+            union
+            select 0 as number,'09' as month
+            union
+            select 0 as number,'10' as month
+            union
+            select 0 as number,'11' as month
+            union
+            select 0 as number,'12' as month
+           ) aa
+           where month not in (
+           select month from(
+             select checkdate,student_school,lefteyeVision,DATE_FORMAT(checkdate,'%m') as month,
+             righteyeVision
+             from student_month_details a where  DATE_FORMAT(NOW(), '%Y') +'-01-01 00:00:00' and DATE_FORMAT(NOW(), '%Y') +'-12-31 00:00:00'
+             and  student_school=#{studentSchool}
+             )aa where (lefteyeVision &lt; (select vision_standard from student_compared limit 1)
+             or righteyeVision &lt; (select vision_standard from student_compared limit 1)) group by month
+            )
+           ) order by month
+    </select>
+
+
+
+
+    <select id="selectClassVisionTrendByUserId" parameterType="SysClassTrend" resultMap="ClassTrendResult">
+        SELECT (select dept_name from sys_dept a where a.dept_id=student_city)studentCity,
+        (select dept_name from sys_dept a where a.dept_id=student_area)studentArea,
+        (select dept_name from sys_dept a where a.dept_id=student_school)studentSchool,
+        (select dept_name from sys_dept a where a.dept_id=student_grade)studentGrade,
+        (select dept_name from sys_dept a where a.dept_id=student_class)studentClass,a.month,a.number from(
+        select student_city,student_area,student_school,student_grade,student_class,month,number
+        from student_month_class_details a
+        where 1=1
+        <if test="userId != null and userId != 0 and userId != 127">
+            and   (student_city=#{userId} or student_grade=#{userId} or student_area=#{userId} or student_school=#{userId} or  student_class=#{userId})
+        </if>
+        )a left join sys_dept b on a.student_class=b.dept_id
+    </select>
+
+
+    <select id="selectClassName" parameterType="SysClassTrend" resultMap="ClassTrendResult">
+        SELECT (dept_name)studentClass,(a.student_class)user_id from
+				(SELECT DISTINCT student_class from student_month_class_details where 1=1
+        <if test="userId != null and userId != 0 and userId != 127">
+            and  (student_city=#{userId} or student_grade=#{userId} or student_area=#{userId} or student_school=#{userId} or  student_class=#{userId})
+        </if>
+		)a left join sys_dept on dept_id=a.student_class
+    </select>
+
+
+    <!--学校趋势图插入 -->
+    <insert id="insertmonthdetails">
+        INSERT into student_month_details
+        (student_code,student_name,user_id,student_city,student_area,student_school,student_grade,student_class,lefteyeVision,righteyeVision,checkdate,timeofday)
+                select  a.student_code,a.student_name,a.user_id,a.student_city,a.student_area,a.student_school,student_grade,student_class,
+                (select lefteyeVision from student_details
+            where student_code = a.student_code order by checkdate desc limit 1)lefteyeVision,
+        (select righteyeVision from student_details where student_code = a.student_code order by checkdate desc limit 1)righteyeVision,
+        (now())checkdate,(select timeofday from student_details where student_code = a.student_code order by checkdate desc limit 1)timeofday from student a
+    </insert>
+
+
+    <select id="selectStudentClass" resultType="java.util.HashMap">
+       	SELECT DISTINCT student_class from student
+    </select>
+
+
+    <!--班级趋势图定时器插入-->
+    <insert id="insertClassMonthDetails" parameterType="int">
+        INSERT into student_month_class_details (student_city,student_area,student_school,student_grade,student_class,month,number)
+        select a.student_city,a.student_area,a.student_school,student_grade,student_class,DATE_FORMAT(now(),'%m')month,(select count(*)number from(
+        select  student_class,student_code,(select lefteyeVision from student_details
+        where student_code = a.student_code order by checkdate desc limit 1)lefteyeVision,
+        (select righteyeVision from student_details where student_code = a.student_code order by 	checkdate desc limit 1)righteyeVision,
+        (select checkdate from student_details where student_code = a.student_code order by 	checkdate desc limit 1)checkdate from student a where  student_class=#{studentClass} )aa
+        where (lefteyeVision &lt; (select vision_standard from student_compared limit 1) or righteyeVision &lt;  (select vision_standard from student_compared limit 1)) GROUP BY student_class)number
+        from student a where student_class=#{studentClass} GROUP BY student_class
+    </insert>
+
+</mapper>

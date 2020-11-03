@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxWechartDeviceYearMapper">
+    
+    <resultMap type="YxWechartDeviceYear" id="YxWechartDeviceYearResult">
+        <result property="id"    column="ID"    />
+        <result property="openid"    column="openID"    />
+        <result property="deviceid"    column="DeviceID"    />
+        <result property="high"    column="High"    />
+        <result property="seatstatus"    column="SeatStatus"    />
+        <result property="createtime"    column="CreateTime"    />
+        <result property="duration"    column="Duration"    />
+        <result property="starttime"    column="StartTime"    />
+    </resultMap>
+
+    <resultMap type="YxWechartDeviceYear" id="YxWechartDeviceYearTotalResult">
+        <result property="seatstatus"    column="SeatStatus"    />
+        <result property="duration"    column="Duration"    />
+        <result property="starttime"    column="StartTime"    />
+    </resultMap>
+
+    <sql id="selectYxWechartDeviceYearVo">
+        select ID, openID, DeviceID, High, SeatStatus, CreateTime, Duration, StartTime from yx_wechart_device_year
+    </sql>
+
+    <select id="selectYxWechartDeviceYearList" parameterType="java.util.Map" resultMap="YxWechartDeviceYearResult">
+        <include refid="selectYxWechartDeviceYearVo"/>
+        <where>
+            CreateTime    like concat('%', YEAR(NOW()), '%')
+            <if test="openid != null  and openid != ''"> and openID = #{openid}</if>
+        </where>
+    </select>
+    
+    <select id="selectYxWechartDeviceYearById" parameterType="Long" resultMap="YxWechartDeviceYearResult">
+        <include refid="selectYxWechartDeviceYearVo"/>
+        where ID = #{id}
+    </select>
+
+    <select id="selectYxWechartDeviceYearTotal" parameterType="String" resultMap="YxWechartDeviceYearTotalResult">
+        select sum(Duration) Duration, sum(StartTime) StartTime,SeatStatus
+        from yx_wechart_device_year WHERE openID = #{openid}
+        and   CreateTime    like concat('%', YEAR(NOW()), '%')
+        group by SeatStatus
+    </select>
+        
+    <insert id="insertYxWechartDeviceYear" parameterType="YxWechartDeviceYear" useGeneratedKeys="true" keyProperty="id">
+        insert into yx_wechart_device_year
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openid != null  and openid != ''">openID,</if>
+            <if test="deviceid != null  and deviceid != ''">DeviceID,</if>
+            <if test="high != null ">High,</if>
+            <if test="seatstatus != null ">SeatStatus,</if>
+            <if test="createtime != null  and createtime != ''">CreateTime,</if>
+            <if test="duration != null ">Duration,</if>
+            <if test="starttime != null  and starttime != ''">StartTime,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openid != null  and openid != ''">#{openid},</if>
+            <if test="deviceid != null  and deviceid != ''">#{deviceid},</if>
+            <if test="high != null ">#{high},</if>
+            <if test="seatstatus != null ">#{seatstatus},</if>
+            <if test="createtime != null  and createtime != ''">#{createtime},</if>
+            <if test="duration != null ">#{duration},</if>
+            <if test="starttime != null  and starttime != ''">#{starttime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateYxWechartDeviceYear" parameterType="YxWechartDeviceYear">
+        update yx_wechart_device_year
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="openid != null  and openid != ''">openID = #{openid},</if>
+            <if test="deviceid != null  and deviceid != ''">DeviceID = #{deviceid},</if>
+            <if test="high != null ">High = #{high},</if>
+            <if test="seatstatus != null ">SeatStatus = #{seatstatus},</if>
+            <if test="createtime != null  and createtime != ''">CreateTime = #{createtime},</if>
+            <if test="duration != null ">Duration = #{duration},</if>
+            <if test="starttime != null  and starttime != ''">StartTime = #{starttime},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteYxWechartDeviceYearById" parameterType="Long">
+        delete from yx_wechart_device_year where ID = #{id}
+    </delete>
+
+    <delete id="deleteYxWechartDeviceYearByIds" parameterType="String">
+        delete from yx_wechart_device_year where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

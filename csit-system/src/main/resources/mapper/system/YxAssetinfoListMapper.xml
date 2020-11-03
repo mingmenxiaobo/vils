@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxAssetinfoListMapper">
+    
+    <resultMap type="YxAssetinfoList" id="YxAssetinfoListResult">
+        <result property="id"    column="ID"    />
+        <result property="qrcode"    column="Qrcode"    />
+        <result property="viewcode"    column="viewCode"    />
+        <result property="manufacturer"    column="manufacturer"    />
+        <result property="productionDate"    column="production_date"    />
+        <result property="installDate"    column="install_date"    />
+        <result property="maintenancePeriod"    column="maintenance_period"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="contractNumber"    column="contract_number"    />
+        <result property="productName"    column="product_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="remark1"    column="remark1"    />
+        <result property="remark2"    column="remark2"    />
+    </resultMap>
+
+    <sql id="selectYxAssetinfoListVo">
+        select ID, Qrcode, viewCode, manufacturer, production_date, install_date,
+         maintenance_period, customer_name, contract_number, product_name, unit_price, remark1, remark2 from yx_assetinfo_list
+    </sql>
+
+    <select id="selectYxAssetinfoListList" parameterType="YxAssetinfoList" resultMap="YxAssetinfoListResult">
+        <include refid="selectYxAssetinfoListVo"/>
+        <where>  
+            <if test="viewcode != null  and viewcode != ''"> and viewCode = #{viewcode}</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and manufacturer = #{manufacturer}</if>
+            <if test="params.beginProductionDate != null and params.beginProductionDate != '' and params.endProductionDate != null and params.endProductionDate != ''"> and production_date between #{params.beginProductionDate} and #{params.endProductionDate}</if>
+            <if test="params.beginInstallDate!= null and params.beginInstallDate!= '' and params.endInstallDate!= null and params.endInstallDate!= ''"> and install_date between #{params.beginInstallDate} and #{params.endInstallDate}</if>
+            <if test="params.beginMaintenancePeriod != null and params.beginMaintenancePeriod != '' and params.endMaintenancePeriod != null and params.endMaintenancePeriod != ''"> and maintenance_period between #{params.beginMaintenancePeriod} and #{params.endMaintenancePeriod}</if>
+            <if test="customerName != null  and customerName != ''"> and customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="contractNumber != null  and contractNumber != ''"> and contract_number = #{contractNumber}</if>
+            <if test="productName != null  and productName != ''"> and product_name like concat('%', #{productName}, '%')</if>
+            <if test="unitPrice != null "> and unit_price = #{unitPrice}</if>
+            <if test="remark1 != null  and remark1 != ''"> and remark1 = #{remark1}</if>
+            <if test="remark2 != null  and remark2 != ''"> and remark2 = #{remark2}</if>
+        </where>
+    </select>
+
+
+    
+    <select id="selectYxAssetinfoListById" parameterType="Long" resultMap="YxAssetinfoListResult">
+        <include refid="selectYxAssetinfoListVo"/>
+        where ID = #{id}
+    </select>
+
+    <select id="selectYxAssetinfoListByQrcode" parameterType="String" resultMap="YxAssetinfoListResult">
+        <include refid="selectYxAssetinfoListVo"/>
+        where qrcode = #{qrcode}
+    </select>
+
+
+
+        
+    <insert id="insertYxAssetinfoList" parameterType="YxAssetinfoList">
+        insert into yx_assetinfo_list
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="id != null ">ID,</if>
+            <if test="qrcode != null  and qrcode != ''">Qrcode,</if>
+            <if test="viewcode != null  and viewcode != ''">viewCode,</if>
+            <if test="manufacturer != null  and manufacturer != ''">manufacturer,</if>
+            <if test="productionDate != null  and productionDate != ''">production_date,</if>
+            <if test="installDate!= null  and installDate!= ''">install_date,</if>
+            <if test="maintenancePeriod != null  and maintenancePeriod != ''">maintenance_period,</if>
+            <if test="customerName != null  and customerName != ''">customer_name,</if>
+            <if test="contractNumber != null  and contractNumber != ''">contract_number,</if>
+            <if test="productName != null  and productName != ''">product_name,</if>
+            <if test="unitPrice != null ">unit_price,</if>
+            <if test="remark1 != null  and remark1 != ''">remark1,</if>
+            <if test="remark2 != null  and remark2 != ''">remark2,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="id != null ">#{id},</if>
+            <if test="qrcode != null  and qrcode != ''">#{qrcode},</if>
+            <if test="viewcode != null  and viewcode != ''">#{viewcode},</if>
+            <if test="manufacturer != null  and manufacturer != ''">#{manufacturer},</if>
+            <if test="productionDate != null  and productionDate != ''">#{productionDate},</if>
+            <if test="installDate!= null  and installDate!= ''">#{installDate},</if>
+            <if test="maintenancePeriod != null  and maintenancePeriod != ''">#{maintenancePeriod},</if>
+            <if test="customerName != null  and customerName != ''">#{customerName},</if>
+            <if test="contractNumber != null  and contractNumber != ''">#{contractNumber},</if>
+            <if test="productName != null  and productName != ''">#{productName},</if>
+            <if test="unitPrice != null ">#{unitPrice},</if>
+            <if test="remark1 != null  and remark1 != ''">#{remark1},</if>
+            <if test="remark2 != null  and remark2 != ''">#{remark2},</if>
+         </trim>
+    </insert>
+
+    <update id="updateYxAssetinfoList" parameterType="YxAssetinfoList">
+        update yx_assetinfo_list
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="qrcode != null  and qrcode != ''">Qrcode = #{qrcode},</if>
+            <if test="viewcode != null  and viewcode != ''">viewCode = #{viewcode},</if>
+            <if test="manufacturer != null  and manufacturer != ''">manufacturer = #{manufacturer},</if>
+            <if test="productionDate != null  and productionDate != ''">production_date = #{productionDate},</if>
+            <if test="installDate!= null  and installDate!= ''">install_date = #{installDate},</if>
+            <if test="maintenancePeriod != null  and maintenancePeriod != ''">maintenance_period = #{maintenancePeriod},</if>
+            <if test="customerName != null  and customerName != ''">customer_name = #{customerName},</if>
+            <if test="contractNumber != null  and contractNumber != ''">contract_number = #{contractNumber},</if>
+            <if test="productName != null  and productName != ''">product_name = #{productName},</if>
+            <if test="unitPrice != null ">unit_price = #{unitPrice},</if>
+            <if test="remark1 != null  and remark1 != ''">remark1 = #{remark1},</if>
+            <if test="remark2 != null  and remark2 != ''">remark2 = #{remark2},</if>
+        </trim>
+        where ID = #{id}
+    </update>
+
+    <delete id="deleteYxAssetinfoListById" parameterType="Long">
+        delete from yx_assetinfo_list where ID = #{id}
+    </delete>
+
+    <delete id="deleteYxAssetinfoListByIds" parameterType="String">
+        delete from yx_assetinfo_list where ID in 
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+    
+</mapper>

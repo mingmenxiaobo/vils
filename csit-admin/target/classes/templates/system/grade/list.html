@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" xmlns:shiro="http://www.pollix.at/thymeleaf/shiro">
+<head>
+	<th:block th:include="include :: header('UserList')" />
+	<th:block th:include="include :: layout-latest-css" />
+	<th:block th:include="include :: ztree-css" />
+</head>
+<body class="gray-bg">
+	<div class="ui-layout-center">
+		<div class="container-div">
+			<div class="row">
+				<div class="col-sm-12 search-collapse">
+					<form id="grade-form">
+						<div class="select-list">
+							<ul>
+								<li>
+									<p >[[#{device.title.deptid}]]：</p>
+									<div class="col-sm-3" style="padding: 0px">
+										<div class="input-group">
+											<input id="userId" name="userId" type="hidden"  />
+											<input style="width: 150px" name="treedeptName" onclick="selectDeptTree()" id="treedeptName" type="text" th:placeholder="#{user.title.dept}" class="form-control" required>
+										</div>
+									</div>
+								</li>
+
+								<li>
+									<a class="btn btn-primary btn-rounded btn-sm" onclick="search2()"><i class="fa fa-search"></i>&nbsp;[[#{public.button.query}]]</a>
+								    <a class="btn btn-warning btn-rounded btn-sm" onclick="$.form.reset()"><i class="fa fa-refresh"></i>&nbsp;[[#{public.button.refresh}]]</a>
+								</li>
+							</ul>
+						</div>
+					</form>
+				</div>
+				
+		        <div class="btn-group-sm" id="toolbar" role="group">
+					<a class="btn btn-info" onclick="goExcel()" shiro:hasPermission="system:grade:list">
+						<i class="fa fa-upload"></i>年级视力报表
+					</a>
+					<a class="btn btn-warning" onclick="$.table.exportExcel()" shiro:hasPermission="system:grade:export">
+						<i class="fa fa-download"></i> [[#{public.button.export}]]
+					</a>
+					<a class="btn btn-success" onclick="$.operate.add()" shiro:hasPermission="system:grade:edit">
+						<i class="fa fa-plus"></i> 修改视力标准
+					</a>
+
+		        </div>
+		        
+		        <div class="col-sm-12 select-table table-striped">
+				    <table id="bootstrap-table"></table>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<th:block th:include="include :: footer" />
+	<th:block th:include="include :: layout-latest-js" />
+	<th:block th:include="include :: ztree-js" />
+	<script th:inline="javascript">
+		var addFlag = [[${@permission.hasPermi('system:grade:details')}]];
+		var listFlag = [[${@permission.hasPermi('system:user:student')}]];
+		var prefix = ctx + "system/grade";
+		var num;
+		var userId
+
+		$(function() {
+		    var panehHidden = false;
+		    if ($(this).width() < 769) {
+		        panehHidden = true;
+		    }
+		    $('body').layout({ initClosed: panehHidden, west__size: 185 });
+		    queryUserList();
+		    queryDeptTree();
+
+		});
+
+
+		function queryUserList() {
+		    var options = {
+		        url: prefix + "/lists",
+				exportUrl: prefix + "/export",
+				createUrl: prefix + "/edit",
+		        modalName: "grade",
+		        columns: [
+		        {
+		            field: 'grade',
+					align: 'center',
+		            title: '年级'
+		        },
+				{
+					field: 'countaa',
+					align: 'center',
+					title: '视力正常人数（双眼视力都高于视力标准值）'
+				},
+				{
+					field: 'countbb',
+					align: 'center',
+					title: '每天使用电子设备超过4小时人数'
+				}]
+		    };
+		    $.table.init(options);
+		}
+
+		function goExcel() {
+			userId=document.getElementById("userId").value;
+			$.ajax({
+				url: ctx+'system/grade/checkSchool',
+				dataType: 'json',
+				data:{"userId":userId},
+				type: 'post',
+				async:false,
+				success: function (res) {
+					if (res[0].Code == 200) {
+						num=res[0].data;
+					}
+				},
+				error: function (error) {
+
+				}
+			});
+			if(num > 0){
+				var url = prefix + "/details/"+userId;
+				if(userId == ""){
+					url = prefix + "/details/0";
+				}
+				$.modal.openTab("年级报表", url);
+			}else{
+				alert("请选择年级的上级组织");
+			}
+			/*var url = prefix + '/student';
+			$.modal.openTab("学生数据", url);*/
+		}
+
+
+		function queryDeptTree()
+		{
+			var url = ctx + "system/dept/treeData";
+			var options = {
+		        url: url,
+		        expandLevel: 2,
+		        onClick : zOnClick
+		    };
+			$.tree.init(options);
+			
+			function zOnClick(event, treeId, treeNode) {
+				$("#deptId").val(treeNode.id);
+
+				$("#parentId").val(treeNode.pId);
+
+				$.table.search();
+			}
+		}
+		
+		$('#btnExpand').click(function() {
+			$._tree.expandAll(true);
+		    $(this).hide();
+		    $('#btnCollapse').show();
+		});
+		
+		$('#btnCollapse').click(function() {
+			$._tree.expandAll(false);
+		    $(this).hide();
+		    $('#btnExpand').show();
+		});
+		
+		$('#btnRefresh').click(function() {
+			queryDeptTree();
+		});
+
+
+		/*用户管理-新增-选择部门树*/
+		function selectDeptTree() {
+			var treeId = $("#treeDeptId").val();
+			var deptId = $.common.isEmpty(treeId) ? "100" : $("#treeDeptId").val();
+			var url = ctx + "system/dept/selectDeptTree/" + deptId;
+			var options = {
+				title: [[#{device.title.selectmenu}]],
+				width: "380",
+				url: url,
+				callBack: doSubmitDept
+			};
+			$.modal.openOptions(options);
+		}
+
+		function doSubmitDept(index, layero){
+			var body = layer.getChildFrame('body', index);
+			$("#userId").val(body.find('#treeId').val());
+			$("#treedeptName").val(body.find('#treeName').val());
+			layer.close(index);
+		}
+
+		 function search2(formId, tableId, data) {
+			 userId=document.getElementById("userId").value;
+			 $.ajax({
+				 url: ctx+'system/grade/checkSchool',
+				 dataType: 'json',
+				 data:{"userId":userId},
+				 type: 'post',
+				 async:false,
+				 success: function (res) {
+					 if (res[0].Code == 200) {
+						 num=res[0].data;
+					 }
+				 },
+				 error: function (error) {
+
+				 }
+			 });
+			 if(num>0){
+				 table.set(tableId);
+				 var currentId = $.common.isEmpty(formId) ? $('form').attr('id') : formId;
+				 var params = $.common.isEmpty(tableId) ? $("#" + table.options.id).bootstrapTable('getOptions') : $("#" + tableId).bootstrapTable('getOptions');
+				 params.queryParams = function(params) {
+					 var search = $.common.formToJSON(currentId);
+					 if($.common.isNotEmpty(data)){
+						 $.each(data, function(key) {
+							 search[key] = data[key];
+						 });
+					 }
+					 search.pageSize = params.limit;
+					 search.pageNum = params.offset / params.limit + 1;
+					 search.searchValue = params.search;
+					 search.orderByColumn = params.sort;
+					 search.isAsc = params.order;
+					 return search;
+				 }
+				 if($.common.isNotEmpty(tableId)){
+					 $("#" + tableId).bootstrapTable('refresh', params);
+				 } else{
+					 $("#" + table.options.id).bootstrapTable('refresh', params);
+				 }
+			 }else {
+				 alert("你选择的不是学校或该学校无数据！");
+			 }
+		}
+	</script>
+</body>
+<!-- 导入区域 -->
+<script id="importTpl" type="text/template">
+<form enctype="multipart/form-data" class="mt20 mb10">
+	<div class="col-xs-offset-1">
+		<input type="file" id="file" name="file"/>
+		<div class="mt10 pt5">
+			<input type="checkbox" id="updateSupport" name="updateSupport" th:title="#{user.title.updateprompt}">是否更新已经存在的数据
+			 &nbsp;	<a onclick="$.table.importTemplate()" class="btn btn-default btn-xs"><i class="fa fa-file-excel-o"></i>下载</a>
+		</div>
+		<font color="red" class="pull-left mt10">
+			[[#{user.title.prompt}]]
+		</font>
+	</div>
+</form>
+</script>
+</html>

@@ -1,0 +1,233 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxAssetReportMapper">
+    
+    <resultMap type="YxAssetinforeport" id="YxAssetReportResult">
+        <result property="id"    column="ID"    />
+        <result property="qrcode"    column="Qrcode"    />
+        <result property="viewcode"    column="viewCode"    />
+        <result property="manufacturer"    column="manufacturer"    />
+        <result property="productionDate"    column="production_date"    />
+        <result property="installDate"    column="install_date"    />
+        <result property="maintenancePeriod"    column="maintenance_period"    />
+        <result property="customerName"    column="customer_name"    />
+        <result property="contractNumber"    column="contract_number"    />
+        <result property="productName"    column="product_name"    />
+        <result property="unitPrice"    column="unit_price"    />
+        <result property="remark1"    column="remark1"    />
+        <result property="remark2"    column="remark2"    />
+        <result property="duration"    column="Duration"    />
+        <result property="free"    column="Free"    />
+        <result property="RepDate"    column="CreateTime"    />
+        <result property="usep"    column="usep"    />
+        <result property="unusep"    column="unusep"    />
+        <result property="deptId"    column="deptId"    />
+    </resultMap>
+
+
+
+
+    <select  id="AssetUseInfoReport" parameterType="com.csit.system.domain.YxAssetinforeport" resultMap="YxAssetReportResult">
+        select al.*,A.*,B.Duration  as Free,A.Duration*100/(A.Duration+B.Duration) usep,B.Duration*100/(A.Duration+B.Duration) unusep from (
+        select a.DeviceID, a.CreateTime,a.useStatus ,sum(a.Duration) Duration from (
+        select m.* from yx_device_month m ,(
+        select a.* from (
+        select a.*,ifnull(b.status,a.db_status) status from yx_holiday_all_year a left join (
+        select * from yx_holiday
+        <if test="deptId != null and deptId != 0">
+          where dept=#{deptId}
+        </if>
+        ) b
+        on a.repDate=b.repdate
+        <if test="beginRepDate != null and beginRepDate != '' and endRepDate != null and endRepDate != ''">
+            where  a.repDate between #{beginRepDate} and #{endRepDate}
+        </if>
+        ) as a
+        where  a.status=1 order by a.repDate
+        ) as ymd
+        where m.CreateTime=ymd.repDate  and useStatus=1
+        ) as a group by a.DeviceID, a.CreateTime,a.useStatus
+        ) as A,
+        (
+        select a.DeviceID, a.CreateTime,a.useStatus ,sum(a.Duration) Duration from (
+        select m.* from yx_device_month m ,(
+        select a.* from (
+        select a.*,ifnull(b.status,a.db_status) status from yx_holiday_all_year a left join (
+        select * from yx_holiday
+        <if test="deptId != null and deptId != 0">
+        where dept=#{deptId}
+        </if>
+        ) b
+        on a.repDate=b.repdate
+        <if test="beginRepDate != null and beginRepDate != '' and endRepDate != null and endRepDate != ''">
+            where  a.repDate between #{beginRepDate} and #{endRepDate}
+        </if>
+        ) as a
+        where  a.status=1 order by a.repDate
+        ) as ymd
+        where m.CreateTime=ymd.repDate  and useStatus=0
+        ) as a group by a.DeviceID, a.CreateTime,a.useStatus
+        ) as B,
+        yx_device_config dc,yx_assetinfo_list al
+        <where>
+            A.CreateTime=B.CreateTime and a.DeviceID=b.DeviceID
+            and A.DeviceID=dc.device_id and dc.qrcode=al.Qrcode
+            <if test="deptId != null and deptId != 0">
+            and A.DeviceID in (
+            select device_code from yx_device where
+            dept_id in (
+            select dept_id from  sys_dept where dept_id=#{deptId} or  dept_id in
+            (SELECT t.dept_id FROM sys_dept t  WHERE FIND_IN_SET(#{deptId}, ancestors))) and device_type=2)
+            </if>
+            <if test="viewcode != null  and viewcode != ''"> and al.viewCode like concat('%', #{viewcode}, '%')</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and al.manufacturer  like concat('%', #{manufacturer}, '%')</if>
+            <if test="customerName != null  and customerName != ''"> and al.customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="productName != null  and productName != ''"> and al.product_name like concat('%', #{productName}, '%')</if>
+        </where>
+        order by A.CreateTime
+
+    </select>
+
+    <!--获取设备名称-->
+    <select  id="getViewCode" parameterType="YxAssetinforeport" resultMap="YxAssetReportResult">
+        select distinct viewCode from (
+        select a.DeviceID, a.CreateTime,a.useStatus ,sum(a.Duration) Duration from (
+        select m.* from yx_device_month m ,(
+        select a.* from (
+        select a.*,ifnull(b.status,a.db_status) status from yx_holiday_all_year a left join (
+        select * from yx_holiday
+        <if test="deptId != null and deptId != 0">
+            where dept=#{deptId}
+        </if>
+        ) b
+        on a.repDate=b.repdate
+        <if test="beginRepDate != null and beginRepDate != '' and endRepDate != null and endRepDate != ''">
+            where  a.repDate between #{beginRepDate} and #{endRepDate}
+        </if>
+        ) as a
+        where  a.status=1 order by a.repDate
+        ) as ymd
+        where m.CreateTime=ymd.repDate  and useStatus=1
+        ) as a group by a.DeviceID, a.CreateTime,a.useStatus
+        ) as A,
+        (
+        select a.DeviceID, a.CreateTime,a.useStatus ,sum(a.Duration) Duration from (
+        select m.* from yx_device_month m ,(
+        select a.* from (
+        select a.*,ifnull(b.status,a.db_status) status from yx_holiday_all_year a left join (
+        select * from yx_holiday
+        <if test="deptId != null and deptId != 0">
+            where dept=#{deptId}
+        </if>
+        ) b
+        on a.repDate=b.repdate
+        <if test="beginRepDate != null and beginRepDate != '' and endRepDate != null and endRepDate != ''">
+            where  a.repDate between #{beginRepDate} and #{endRepDate}
+        </if>
+        ) as a
+        where  a.status=1 order by a.repDate
+        ) as ymd
+        where m.CreateTime=ymd.repDate  and useStatus=0
+        ) as a group by a.DeviceID, a.CreateTime,a.useStatus
+        ) as B,
+        yx_device_config dc,yx_assetinfo_list al
+        <where>
+            A.CreateTime=B.CreateTime and a.DeviceID=b.DeviceID
+            and A.DeviceID=dc.device_id and dc.qrcode=al.Qrcode
+            <if test="deptId != null and deptId != 0">
+                and A.DeviceID in (
+                select device_code from yx_device where
+                dept_id in (
+                select dept_id from  sys_dept where dept_id=#{deptId} or  dept_id in
+                (SELECT t.dept_id FROM sys_dept t  WHERE FIND_IN_SET(#{deptId}, ancestors))) and device_type=2)
+            </if>
+            <if test="viewcode != null  and viewcode != ''"> and al.viewCode like concat('%', #{viewcode}, '%')</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and al.manufacturer  like concat('%', #{manufacturer}, '%')</if>
+            <if test="customerName != null  and customerName != ''"> and al.customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="productName != null  and productName != ''"> and al.product_name like concat('%', #{productName}, '%')</if>
+        </where>
+        order by A.CreateTime
+
+    </select>
+
+
+    <!--获取日期去除重复日期-->
+    <select  id="getCreateTime" parameterType="YxAssetinforeport" resultMap="YxAssetReportResult">
+        select distinct A.CreateTime from (
+        select a.DeviceID, a.CreateTime,a.useStatus ,sum(a.Duration) Duration from (
+        select m.* from yx_device_month m ,(
+        select a.* from (
+        select a.*,ifnull(b.status,a.db_status) status from yx_holiday_all_year a left join (
+        select * from yx_holiday
+        <if test="deptId != null and deptId != 0">
+            where dept=#{deptId}
+        </if>
+        ) b
+        on a.repDate=b.repdate
+        <if test="beginRepDate != null and beginRepDate != '' and endRepDate != null and endRepDate != ''">
+            where  a.repDate between #{beginRepDate} and #{endRepDate}
+        </if>
+        ) as a
+        where  a.status=1 order by a.repDate
+        ) as ymd
+        where m.CreateTime=ymd.repDate  and useStatus=1
+        ) as a group by a.DeviceID, a.CreateTime,a.useStatus
+        ) as A,
+        (
+        select a.DeviceID, a.CreateTime,a.useStatus ,sum(a.Duration) Duration from (
+        select m.* from yx_device_month m ,(
+        select a.* from (
+        select a.*,ifnull(b.status,a.db_status) status from yx_holiday_all_year a left join (
+        select * from yx_holiday
+        <if test="deptId != null and deptId != 0">
+            where dept=#{deptId}
+        </if>
+        ) b
+        on a.repDate=b.repdate
+        <if test="beginRepDate != null and beginRepDate != '' and endRepDate != null and endRepDate != ''">
+            where  a.repDate between #{beginRepDate} and #{endRepDate}
+        </if>
+        ) as a
+        where  a.status=1 order by a.repDate
+        ) as ymd
+        where m.CreateTime=ymd.repDate  and useStatus=0
+        ) as a group by a.DeviceID, a.CreateTime,a.useStatus
+        ) as B,
+        yx_device_config dc,yx_assetinfo_list al
+        <where>
+            A.CreateTime=B.CreateTime and a.DeviceID=b.DeviceID
+            and A.DeviceID=dc.device_id and dc.qrcode=al.Qrcode
+            <if test="deptId != null and deptId != 0">
+                and A.DeviceID in (
+                select device_code from yx_device where
+                dept_id in (
+                select dept_id from  sys_dept where dept_id=#{deptId} or  dept_id in
+                (SELECT t.dept_id FROM sys_dept t  WHERE FIND_IN_SET(#{deptId}, ancestors))) and device_type=2)
+            </if>
+            <if test="viewcode != null  and viewcode != ''"> and al.viewCode like concat('%', #{viewcode}, '%')</if>
+            <if test="manufacturer != null  and manufacturer != ''"> and al.manufacturer  like concat('%', #{manufacturer}, '%')</if>
+            <if test="customerName != null  and customerName != ''"> and al.customer_name like concat('%', #{customerName}, '%')</if>
+            <if test="productName != null  and productName != ''"> and al.product_name like concat('%', #{productName}, '%')</if>
+        </where>
+        order by A.CreateTime
+
+    </select>
+
+    <!--获取某个日期所有设备使用率的平均值-->
+    <select id="getAvgUsep" parameterType="String" resultMap="YxAssetReportResult">
+        select A.CreateTime,ifnull(AVG(A.Duration*100/(A.Duration+B.Duration)),0.0) usep from
+        ( select a.DeviceID, a.CreateTime,a.useStatus ,sum(a.Duration) Duration from
+        ( select m.* from yx_device_month m ,( select a.* from ( select a.*,ifnull(b.status,a.db_status) status from yx_holiday_all_year a
+        left join ( select * from yx_holiday ) b on a.repDate=b.repdate  ) as a where a.status=1 order by a.repDate ) as ymd
+        where m.CreateTime=ymd.repDate and useStatus=1 ) as a group by a.DeviceID, a.CreateTime,a.useStatus ) as A,
+        ( select a.DeviceID, a.CreateTime,a.useStatus ,sum(a.Duration) Duration from
+        ( select m.* from yx_device_month m ,( select a.* from ( select a.*,ifnull(b.status,a.db_status) status from yx_holiday_all_year a
+        left join ( select * from yx_holiday ) b on a.repDate=b.repdate  ) as a where a.status=1 order by a.repDate ) as ymd
+        where m.CreateTime=ymd.repDate and useStatus=0 ) as a group by a.DeviceID, a.CreateTime,a.useStatus ) as B,
+        yx_device_config dc,yx_assetinfo_list al WHERE A.CreateTime=B.CreateTime and a.DeviceID=b.DeviceID and A.DeviceID=dc.device_id and dc.qrcode=al.Qrcode  and A.CreateTime=#{RepDate}
+        order by A.CreateTime
+    </select>
+    
+</mapper>

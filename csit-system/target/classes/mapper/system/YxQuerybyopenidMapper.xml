@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csit.system.mapper.YxQuerybyopenidMapper">
+    
+    <resultMap type="YxQuerybyopenid" id="YxQuerybyopenidResult">
+        <result property="id"    column="ID"    />
+        <result property="openid"    column="openid"    />
+        <result property="qrcode"    column="qrcode"    />
+        <result property="createtime"    column="createTime"    />
+    </resultMap>
+
+    <sql id="selectYxQuerybyopenidVo">
+        select ID, openid, qrcode, createTime from yx_querybyopenid
+    </sql>
+
+    <select id="selectYxQuerybyopenidList" parameterType="YxQuerybyopenid" resultMap="YxQuerybyopenidResult">
+        <include refid="selectYxQuerybyopenidVo"/>
+        <where>  
+            <if test="openid != null  and openid != ''"> and openid = #{openid}</if>
+            <if test="qrcode != null  and qrcode != ''"> and qrcode = #{qrcode}</if>
+            <if test="createtime != null  and createtime != ''"> and createTime = #{createtime}</if>
+        </where>
+    </select>
+    
+    <select id="selectYxQuerybyopenidById" parameterType="String" resultMap="YxQuerybyopenidResult">
+        <include refid="selectYxQuerybyopenidVo"/>
+        where openid = #{openid}
+    </select>
+        
+    <insert id="insertYxQuerybyopenid" parameterType="YxQuerybyopenid" useGeneratedKeys="true" keyProperty="id">
+        replace into yx_querybyopenid
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="openid != null  and openid != ''">openid,</if>
+            <if test="qrcode != null  and qrcode != ''">qrcode,</if>
+            <if test="createtime != null  and createtime != ''">createTime,</if>
+         </trim>
+        <trim prefix="values (" suffix=")" suffixOverrides=",">
+            <if test="openid != null  and openid != ''">#{openid},</if>
+            <if test="qrcode != null  and qrcode != ''">#{qrcode},</if>
+            <if test="createtime != null  and createtime != ''">#{createtime},</if>
+         </trim>
+    </insert>
+
+    <update id="updateYxQuerybyopenid" parameterType="YxQuerybyopenid">
+        update yx_querybyopenid
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="openid != null  and openid != ''">openid = #{openid},</if>
+            <if test="qrcode != null  and qrcode != ''">qrcode = #{qrcode},</if>
+            <if test="createtime != null  and createtime != ''">createTime = #{createtime},</if>
+        </trim>
+        where openid = #{openid}
+    </update>
+
+    <delete id="deleteYxQuerybyopenidById" parameterType="String">
+        delete from yx_querybyopenid where openid = #{openid}
+    </delete>
+
+    <delete id="deleteYxQuerybyopenidByIds" parameterType="String">
+        delete from yx_querybyopenid where openid in
+        <foreach item="openid" collection="array" open="(" separator="," close=")">
+            #{openid}
+        </foreach>
+    </delete>
+    
+</mapper>

@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh" xmlns:th="http://www.thymeleaf.org" >
+<head>
+    <th:block th:include="include :: header('修改设备信息')" />
+</head>
+<body class="white-bg">
+    <div class="wrapper wrapper-content animated fadeInRight ibox-content">
+        <form class="form-horizontal m" id="form-device-edit" th:object="${yxDevice}">
+            <input name="deviceId" th:field="*{deviceId}" type="hidden">
+            <input id="deviceType" name="deviceType" type="hidden" th:value="${yxDevice?.deviceType}"/>
+            <input name="deptId"  type="hidden"  th:field="*{deptId}" id="treeId"/>
+
+                <div class="form-group">
+                    <label class="col-sm-3 control-label"><span style="color: red; ">*</span>[[#{device.title.menu}]]：</label>
+                    <div class="col-sm-8">
+                        <div class="input-group">
+                            <input class="form-control" type="text" name="deptName" onclick="selectDeptTree()" id="treeName" th:field="*{dept.deptName}" required>
+                            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                        </div>
+                    </div>
+                </div>
+
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.devicename}]]：</label>
+                <div class="col-sm-8">
+                    <input name="deviceName" th:field="*{deviceName}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.devicesite}]]：</label>
+                <div class="col-sm-8">
+                    <input name="deviceSite" th:field="*{deviceSite}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.devicecode}]]：</label>
+                <div class="col-sm-8">
+                    <input name="deviceCode" th:field="*{deviceCode}" class="form-control" type="text" required>
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.devicemsisdn}]]：</label>
+                <div class="col-sm-8">
+                    <input name="deviceMsisdn" th:field="*{deviceMsisdn}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.ordernum}]]：</label>
+                <div class="col-sm-8">
+                    <input name="orderNum" th:field="*{orderNum}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.leader}]]：</label>
+                <div class="col-sm-8">
+                    <input name="leader" th:field="*{leader}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.phone}]]：</label>
+                <div class="col-sm-8">
+                    <input name="phone" th:field="*{phone}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.email}]]：</label>
+                <div class="col-sm-8">
+                    <input name="email" th:field="*{email}" class="form-control" type="text">
+                </div>
+            </div>
+            <div class="form-group">    
+                <label class="col-sm-3 control-label">[[#{device.title.status}]]：</label>
+                <div class="col-sm-8">
+                    <select name="status" th:with="type=${@dict.getType('sys_normal_disable')}" class="form-control">
+                        <option value="">[[#{role.title.all}]]</option>
+                        <option th:each="dict : ${type}" th:text="${dict.dictLabel}" th:value="${dict.dictValue}"></option>
+                    </select>
+
+                </div>
+            </div>
+        </form>
+    </div>
+    <th:block th:include="include :: footer" />
+    <script type="text/javascript">
+        var prefix = ctx + "system/device";
+        $("#form-device-edit").validate({
+            focusCleanup: true
+        });
+
+        function submitHandler() {
+            if ($.validate.form()) {
+                $.operate.save(prefix + "/edit", $('#form-device-edit').serialize());
+            }
+        }
+
+        /*用户管理-修改-选择部门树*/
+        function selectDeptTree() {
+            var deptId = $.common.isEmpty($("#treeId").val()) ? "100" : $("#treeId").val();
+            var url = ctx + "system/dept/selectDeptTree/" + deptId;
+            var options = {
+                title: '[[#{device.title.selectmenu}]]',
+                width: "380",
+                url: url,
+                callBack: doSubmit
+            };
+            $.modal.openOptions(options);
+        }
+
+        function doSubmit(index, layero){
+            var tree = layero.find("iframe")[0].contentWindow.$._tree;
+            if ($.tree.notAllowParents(tree)) {
+                var body = layer.getChildFrame('body', index);
+                $("#treeId").val(body.find('#treeId').val());
+                $("#treeName").val(body.find('#treeName').val());
+                layer.close(index);
+            }
+        }
+
+
+
+        $(document).ready( function(){
+            var deviceType = $("#deviceType").val();
+
+            console.log(deviceType);
+            if (deviceType == "1") {
+
+                $("input[name='orderNum']").parents(".form-group").show();
+                $("input[name='leader']").parents(".form-group").show();
+                $("input[name='phone']").parents(".form-group").show();
+                $("input[name='email']").parents(".form-group").show();
+                $("input[name='deviceMsisdn']").parents(".form-group").show();
+
+
+            } else  {
+
+                $("input[name='orderNum']").parents(".form-group").hide();
+                $("input[name='leader']").parents(".form-group").hide();
+                $("input[name='phone']").parents(".form-group").hide();
+                $("input[name='email']").parents(".form-group").hide();
+                $("input[name='deviceMsisdn']").parents(".form-group").hide();
+
+
+            }}
+        );
+    </script>
+</body>
+</html>
